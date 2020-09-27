@@ -1,3 +1,6 @@
 # BottomSheet
 
-A description of this package.
+A Bottom Sheet component made in UIKit.
+
+### To do:
+- [ ] Fix safe area layouts
