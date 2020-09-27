@@ -49,7 +49,7 @@ public final class BottomSheetView: UIView {
             addSubview(contentView)
             
             // Update constraints for the new view
-            contentViewTopAnchor = contentView.topAnchor.constraint(equalTo: topAnchor)
+            contentViewTopAnchor = contentView.topAnchor.constraint(equalTo: safeAreaLayoutGuide.topAnchor)
             contentViewTopAnchorToHandle = contentView.topAnchor.constraint(equalTo: dragHandle.bottomAnchor, constant: 16)
             
             setHandle(for: handleStyle)
@@ -131,9 +131,9 @@ public final class BottomSheetView: UIView {
         contentView.translatesAutoresizingMaskIntoConstraints = false
         
         NSLayoutConstraint.activate([
-            contentView.leadingAnchor.constraint(equalTo: leadingAnchor),
-            contentView.trailingAnchor.constraint(equalTo: trailingAnchor),
-            contentView.bottomAnchor.constraint(equalTo: bottomAnchor)
+            contentView.leadingAnchor.constraint(equalTo: safeAreaLayoutGuide.leadingAnchor),
+            contentView.trailingAnchor.constraint(equalTo: safeAreaLayoutGuide.trailingAnchor),
+            contentView.bottomAnchor.constraint(equalTo: safeAreaLayoutGuide.bottomAnchor)
         ])
     }
     
