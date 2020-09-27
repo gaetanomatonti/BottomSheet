@@ -1,7 +1,7 @@
 #if canImport(UIKit)
 import UIKit
 
-final class BottomSheetPresentationController: UIPresentationController {
+public final class BottomSheetPresentationController: UIPresentationController {
     enum Style {
         case adaptive, toSafeAreaTop, fixed(height: CGFloat)
     }
@@ -20,7 +20,7 @@ final class BottomSheetPresentationController: UIPresentationController {
     
     var presentedViewCenter: CGPoint = .zero
     
-    override var frameOfPresentedViewInContainerView: CGRect {
+    public override var frameOfPresentedViewInContainerView: CGRect {
         switch style {
             case .adaptive: return adaptiveFrame
             case .toSafeAreaTop: return toSafeAreaTopFrame
@@ -99,7 +99,7 @@ final class BottomSheetPresentationController: UIPresentationController {
         super.init(presentedViewController: presentedViewController, presenting: presentingViewController)
     }
     
-    override func containerViewWillLayoutSubviews() {
+    public override func containerViewWillLayoutSubviews() {
         super.containerViewWillLayoutSubviews()
         
         guard let presentedView = presentedView else { return }
@@ -113,7 +113,7 @@ final class BottomSheetPresentationController: UIPresentationController {
         }
     }
     
-    override func containerViewDidLayoutSubviews() {
+    public override func containerViewDidLayoutSubviews() {
         super.containerViewDidLayoutSubviews()
         
         guard let presenterView = containerView else { return }
@@ -128,7 +128,7 @@ final class BottomSheetPresentationController: UIPresentationController {
         dimmingView.frame = presenterView.bounds
     }
     
-    override func presentationTransitionWillBegin() {
+    public override func presentationTransitionWillBegin() {
         dimmingView.alpha = 0
         
         guard let presenterView = containerView else { return }
@@ -138,23 +138,15 @@ final class BottomSheetPresentationController: UIPresentationController {
             self?.dimmingView.alpha = 1
         }, completion: nil)
     }
-    
-    override func presentationTransitionDidEnd(_ completed: Bool) {
         
-    }
-    
-    override func dismissalTransitionWillBegin() {
+    public override func dismissalTransitionWillBegin() {
         presentedViewController.transitionCoordinator?.animate(alongsideTransition: { [weak self] context in
             self?.dimmingView.alpha = 0
         }, completion: { [weak self] context in
             self?.dimmingView.removeFromSuperview()
         })
     }
-    
-    override func dismissalTransitionDidEnd(_ completed: Bool) {
-        
-    }
-        
+            
     @objc func dismiss() {
         presentedViewController.dismiss(animated: true, completion: nil)
     }

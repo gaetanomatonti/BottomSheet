@@ -7,7 +7,7 @@ public final class BottomSheetView: UIView {
         case none, inside, outside
     }
     
-    var handleStyle: HandleStyle = .none {
+    public var handleStyle: HandleStyle = .none {
         willSet {
             setHandle(for: newValue)
             setNeedsLayout()
@@ -26,26 +26,26 @@ public final class BottomSheetView: UIView {
         return view
     }()
     
-    var contentView: UIView = UIView() {
+    public var contentView: UIView = UIView() {
         didSet {
             setHandle(for: handleStyle)
             setContentView()
         }
     }
     
-    var cornerRadius: CGFloat = 16 {
+    public var cornerRadius: CGFloat = 16 {
         willSet {
             setCornerRadius(newValue)
         }
     }
     
-    var dragHandleColor: UIColor = .systemFill {
+    public var dragHandleColor: UIColor = .systemFill {
         willSet {
             dragHandle.backgroundColor = newValue
         }
     }
     
-    var contentBackgroundColor: UIColor = .systemBackground {
+    public var contentBackgroundColor: UIColor = .systemBackground {
         willSet {
             contentView.backgroundColor = newValue
         }
