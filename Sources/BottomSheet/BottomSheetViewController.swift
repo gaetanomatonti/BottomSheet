@@ -5,7 +5,10 @@ public final class BottomSheetViewController: UIViewController {
     
     private let bottomSheetView = BottomSheetView()
     
-    var sheetStyle: BottomSheetView.SheetStyle { bottomSheetView.sheetStyle }
+    var sheetStyle: BottomSheetView.SheetStyle {
+        get { bottomSheetView.sheetStyle }
+        set { bottomSheetView.sheetStyle = newValue }
+    }
     
     public var handleStyle: BottomSheetView.HandleStyle {
         get { bottomSheetView.handleStyle }
