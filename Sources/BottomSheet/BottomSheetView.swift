@@ -167,7 +167,7 @@ public final class BottomSheetView: UIView {
         NSLayoutConstraint.activate([
             contentView.leadingAnchor.constraint(equalTo: safeAreaLayoutGuide.leadingAnchor),
             contentView.trailingAnchor.constraint(equalTo: safeAreaLayoutGuide.trailingAnchor),
-            contentView.bottomAnchor.constraint(equalTo: safeAreaLayoutGuide.bottomAnchor)
+            contentView.bottomAnchor.constraint(equalTo: bottomAnchor)
         ])
     }
     

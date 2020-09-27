@@ -49,6 +49,9 @@ public final class BottomSheetPresentationController: UIPresentationController {
             targetHeight += collectionView.contentSize.height
         }
         
+        // Add the bottom safe area inset
+        targetHeight += containerView.safeAreaInsets.bottom
+        
         var frame = safeAreaFrame
         frame.origin.y += frame.size.height - targetHeight
         frame.size.width = targetWidth
