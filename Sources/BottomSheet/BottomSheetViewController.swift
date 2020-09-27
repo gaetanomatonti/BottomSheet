@@ -5,20 +5,39 @@ public final class BottomSheetViewController: UIViewController {
     
     private let bottomSheetView = BottomSheetView()
     
-    var contentView: UIView {
+    public var handleStyle: BottomSheetView.HandleStyle {
+        get { bottomSheetView.handleStyle }
+        set { bottomSheetView.handleStyle = newValue }
+    }
+    
+    public var contentView: UIView {
         get { bottomSheetView.contentView }
         set { bottomSheetView.contentView = newValue }
     }
     
-//    public override var view: UIView! {
-//        get { bottomSheetView.contentView }
-//        set { bottomSheetView.contentView = newValue }
-//    }
+    public init(handleStyle: BottomSheetView.HandleStyle) {
+        super.init(nibName: nil, bundle: nil)
+        self.handleStyle = handleStyle
+        modalPresentationStyle = .custom
+    }
     
+    public override init(nibName nibNameOrNil: String?, bundle nibBundleOrNil: Bundle?) {
+        super.init(nibName: nil, bundle: nil)
+        modalPresentationStyle = .custom
+    }
+    
+    public required init?(coder: NSCoder) {
+        super.init(coder: coder)
+        modalPresentationStyle = .custom
+    }
+        
     public override func loadView() {
         super.loadView()
+
+        view = bottomSheetView
         
-        view = bottomSheetView.contentView
+        guard let view = view as? BottomSheetView else { return }
+        view.accessibilityIdentifier = "Bottom Sheet"
     }
         
 }

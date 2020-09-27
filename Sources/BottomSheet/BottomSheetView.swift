@@ -28,6 +28,8 @@ public final class BottomSheetView: UIView {
     
     public var contentView: UIView = UIView() {
         didSet {
+            oldValue.removeFromSuperview()
+            addSubview(contentView)
             setHandle(for: handleStyle)
             setContentView()
         }
