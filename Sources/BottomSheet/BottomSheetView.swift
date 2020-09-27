@@ -30,6 +30,11 @@ public final class BottomSheetView: UIView {
         didSet {
             oldValue.removeFromSuperview()
             addSubview(contentView)
+            
+            // Update constraints for the new view
+            contentViewTopAnchor = contentView.topAnchor.constraint(equalTo: topAnchor)
+            contentViewTopAnchorToHandle = contentView.topAnchor.constraint(equalTo: dragHandle.bottomAnchor, constant: 16)
+            
             setHandle(for: handleStyle)
             setContentView()
         }
