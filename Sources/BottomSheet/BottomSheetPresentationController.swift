@@ -2,7 +2,7 @@
 import UIKit
 
 public final class BottomSheetPresentationController: UIPresentationController {
-    enum Style {
+    public enum Style {
         case adaptive, toSafeAreaTop, fixed(height: CGFloat)
     }
     
@@ -94,7 +94,7 @@ public final class BottomSheetPresentationController: UIPresentationController {
     
     let style: Style
     
-    init(style: Style = .adaptive, presentedViewController: UIViewController, presenting presentingViewController: UIViewController?) {
+    public init(style: Style = .adaptive, presentedViewController: UIViewController, presenting presentingViewController: UIViewController?) {
         self.style = style
         super.init(presentedViewController: presentedViewController, presenting: presentingViewController)
     }
