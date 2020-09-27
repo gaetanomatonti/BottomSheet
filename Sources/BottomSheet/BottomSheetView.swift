@@ -78,7 +78,7 @@ public final class BottomSheetView: UIView {
         }
     }
 
-    public init(sheetStyle: SheetStyle = .adaptive, handleStyle: HandleStyle = .none) {
+    public init(sheetStyle: SheetStyle = .toSafeAreaTop, handleStyle: HandleStyle = .none) {
         self.sheetStyle = sheetStyle
         self.handleStyle = handleStyle
         super.init(frame: .zero)
@@ -90,7 +90,7 @@ public final class BottomSheetView: UIView {
     }
     
     override init(frame: CGRect) {
-        self.sheetStyle = .adaptive
+        self.sheetStyle = .toSafeAreaTop
         super.init(frame: frame)
         
         backgroundColor = .clear
@@ -102,7 +102,7 @@ public final class BottomSheetView: UIView {
     }
     
     required init?(coder: NSCoder) {
-        self.sheetStyle = .adaptive
+        self.sheetStyle = .toSafeAreaTop
         super.init(coder: coder)
 
         backgroundColor = .clear

@@ -18,7 +18,7 @@ public final class BottomSheetPresentationController: UIPresentationController {
     private var presentedViewCenter: CGPoint = .zero
     
     public override var frameOfPresentedViewInContainerView: CGRect {
-        switch style {
+        switch sheetStyle {
             case .adaptive: return adaptiveFrame
             case .toSafeAreaTop: return toSafeAreaTopFrame
             case .fixed(let height): return fixedFrame(height)
@@ -90,10 +90,12 @@ public final class BottomSheetPresentationController: UIPresentationController {
     }
     
     /// The style of the bottom sheet
-    let style: BottomSheetView.SheetStyle
+    var sheetStyle: BottomSheetView.SheetStyle {
+        guard let presentedController = presentedViewController as? BottomSheetViewController else { return .toSafeAreaTop }
+        return presentedController.sheetStyle
+    }
     
     public init(presentedViewController: BottomSheetViewController, presenting presentingViewController: UIViewController?) {
-        self.style = presentedViewController.sheetStyle
         super.init(presentedViewController: presentedViewController, presenting: presentingViewController)
     }
     
