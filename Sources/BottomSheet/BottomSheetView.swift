@@ -2,7 +2,16 @@
 import UIKit
 
 public final class BottomSheetView: UIView {
-    
+    /// The style of the sheet
+    public enum SheetStyle {
+        /// Adapts the size of the bottom sheet to its content. If the content height is greater than the available frame height, it pins the sheet to the top safe area inset, like `toSafeAreaTop`.
+        case adaptive
+        /// Aligns the top of the bottom sheet to the top safe area inset.
+        case toSafeAreaTop
+        /// Sets a fixed height for the sheet. If `height` is greater than the available frame height, it pins the sheet to the top safe area inset, like `toSafeAreaTop`.
+        case fixed(height: CGFloat)
+    }
+
     public enum HandleStyle: CaseIterable {
         /// Hides the handle
         case none
@@ -18,6 +27,8 @@ public final class BottomSheetView: UIView {
             setNeedsLayout()
         }
     }
+    
+    public var sheetStyle: SheetStyle
         
     /// Ancdhors the top of the `contentView` to its superview
     lazy var contentViewTopAnchor = contentView.topAnchor.constraint(equalTo: topAnchor)
@@ -67,7 +78,8 @@ public final class BottomSheetView: UIView {
         }
     }
 
-    public init(handleStyle: HandleStyle) {
+    public init(sheetStyle: SheetStyle = .adaptive, handleStyle: HandleStyle = .none) {
+        self.sheetStyle = sheetStyle
         self.handleStyle = handleStyle
         super.init(frame: .zero)
         
@@ -78,6 +90,7 @@ public final class BottomSheetView: UIView {
     }
     
     override init(frame: CGRect) {
+        self.sheetStyle = .adaptive
         super.init(frame: frame)
         
         backgroundColor = .clear
@@ -89,6 +102,7 @@ public final class BottomSheetView: UIView {
     }
     
     required init?(coder: NSCoder) {
+        self.sheetStyle = .adaptive
         super.init(coder: coder)
 
         backgroundColor = .clear

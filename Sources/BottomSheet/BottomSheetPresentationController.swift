@@ -2,15 +2,6 @@
 import UIKit
 
 public final class BottomSheetPresentationController: UIPresentationController {
-    /// The style of the sheet
-    public enum Style {
-        /// Adapts the size of the bottom sheet to its content. If the content height is greater than the available frame height, it pins the sheet to the top safe area inset, like `toSafeAreaTop`.
-        case adaptive
-        /// Aligns the top of the bottom sheet to the top safe area inset.
-        case toSafeAreaTop
-        /// Sets a fixed height for the sheet. If `height` is greater than the available frame height, it pins the sheet to the top safe area inset, like `toSafeAreaTop`.
-        case fixed(height: CGFloat)
-    }
     
     private lazy var dimmingView: UIVisualEffectView = {
         let effect = UIBlurEffect(style: .systemUltraThinMaterial)
@@ -99,10 +90,10 @@ public final class BottomSheetPresentationController: UIPresentationController {
     }
     
     /// The style of the bottom sheet
-    let style: Style
+    let style: BottomSheetView.SheetStyle
     
-    public init(style: Style = .adaptive, presentedViewController: UIViewController, presenting presentingViewController: UIViewController?) {
-        self.style = style
+    public init(presentedViewController: BottomSheetViewController, presenting presentingViewController: UIViewController?) {
+        self.style = presentedViewController.sheetStyle
         super.init(presentedViewController: presentedViewController, presenting: presentingViewController)
     }
     
