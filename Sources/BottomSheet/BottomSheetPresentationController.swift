@@ -2,11 +2,17 @@
 import UIKit
 
 public final class BottomSheetPresentationController: UIPresentationController {
+    /// The style of the sheet
     public enum Style {
-        case adaptive, toSafeAreaTop, fixed(height: CGFloat)
+        /// Adapts the size of the bottom sheet to its content. If the content height is greater than the available frame height, it pins the sheet to the top safe area inset, like `toSafeAreaTop`.
+        case adaptive
+        /// Aligns the top of the bottom sheet to the top safe area inset.
+        case toSafeAreaTop
+        /// Sets a fixed height for the sheet. If `height` is greater than the available frame height, it pins the sheet to the top safe area inset, like `toSafeAreaTop`.
+        case fixed(height: CGFloat)
     }
     
-    lazy var dimmingView: UIVisualEffectView = {
+    private lazy var dimmingView: UIVisualEffectView = {
         let effect = UIBlurEffect(style: .systemUltraThinMaterial)
         let view = UIVisualEffectView(effect: effect)
         let gesture = UITapGestureRecognizer(target: self, action: #selector(dismiss))
@@ -18,7 +24,7 @@ public final class BottomSheetPresentationController: UIPresentationController {
         UIPanGestureRecognizer(target: self, action: #selector(drag(_:)))
     }()
     
-    var presentedViewCenter: CGPoint = .zero
+    private var presentedViewCenter: CGPoint = .zero
     
     public override var frameOfPresentedViewInContainerView: CGRect {
         switch style {
@@ -28,7 +34,7 @@ public final class BottomSheetPresentationController: UIPresentationController {
         }
     }
     
-    var adaptiveFrame: CGRect {
+    private var adaptiveFrame: CGRect {
         guard let containerView = containerView, let presentedView = presentedView else { return .zero }
         
         let safeAreaFrame = containerView.bounds.inset(by: containerView.safeAreaInsets)
@@ -63,7 +69,7 @@ public final class BottomSheetPresentationController: UIPresentationController {
         return frame
     }
     
-    var toSafeAreaTopFrame: CGRect {
+    private var toSafeAreaTopFrame: CGRect {
         guard let containerView = containerView else { return .zero }
         
         let safeAreaFrame = containerView.bounds.inset(by: containerView.safeAreaInsets)
@@ -75,7 +81,7 @@ public final class BottomSheetPresentationController: UIPresentationController {
         return frame
     }
     
-    func fixedFrame(_ height: CGFloat) -> CGRect {
+    private func fixedFrame(_ height: CGFloat) -> CGRect {
         guard let containerView = containerView else { return .zero }
         
         let safeAreaFrame = containerView.bounds.inset(by: containerView.safeAreaInsets)
@@ -92,6 +98,7 @@ public final class BottomSheetPresentationController: UIPresentationController {
         return frame
     }
     
+    /// The style of the bottom sheet
     let style: Style
     
     public init(style: Style = .adaptive, presentedViewController: UIViewController, presenting presentingViewController: UIViewController?) {
@@ -147,11 +154,11 @@ public final class BottomSheetPresentationController: UIPresentationController {
         })
     }
             
-    @objc func dismiss() {
+    @objc private func dismiss() {
         presentedViewController.dismiss(animated: true, completion: nil)
     }
     
-    @objc func drag(_ gesture: UIPanGestureRecognizer) {
+    @objc private func drag(_ gesture: UIPanGestureRecognizer) {
         guard let presentedView = presentedView, let presenterView = containerView else { return }
         
         switch gesture.state {

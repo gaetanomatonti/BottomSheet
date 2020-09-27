@@ -15,22 +15,37 @@ public final class BottomSheetViewController: UIViewController {
         set { bottomSheetView.contentView = newValue }
     }
     
-    public init(handleStyle: BottomSheetView.HandleStyle) {
+    public var contentBackgroundColor: UIColor {
+        get { bottomSheetView.contentBackgroundColor }
+        set { bottomSheetView.contentBackgroundColor = newValue }
+    }
+    
+    public var sheetCornerRadius: CGFloat {
+        get { bottomSheetView.cornerRadius }
+        set { bottomSheetView.cornerRadius = newValue }
+    }
+    
+    public init(handleStyle: BottomSheetView.HandleStyle = .none, cornerRadius: CGFloat = 16) {
         super.init(nibName: nil, bundle: nil)
+        
         self.handleStyle = handleStyle
+        self.sheetCornerRadius = cornerRadius
+        
         modalPresentationStyle = .custom
     }
     
     public override init(nibName nibNameOrNil: String?, bundle nibBundleOrNil: Bundle?) {
         super.init(nibName: nil, bundle: nil)
+                
         modalPresentationStyle = .custom
     }
     
     public required init?(coder: NSCoder) {
         super.init(coder: coder)
+        
         modalPresentationStyle = .custom
     }
-        
+    
     public override func loadView() {
         super.loadView()
 

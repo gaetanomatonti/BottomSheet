@@ -4,7 +4,12 @@ import UIKit
 public final class BottomSheetView: UIView {
     
     public enum HandleStyle: CaseIterable {
-        case none, inside, outside
+        /// Hides the handle
+        case none
+        /// Shows the handle inside the content view
+        case inside
+        /// Shows the handle on top of the content view
+        case outside
     }
     
     public var handleStyle: HandleStyle = .none {
@@ -26,6 +31,7 @@ public final class BottomSheetView: UIView {
         return view
     }()
     
+    /// The content of the bottom sheet. Assign your view to this variable to set a custom content.
     public var contentView: UIView = UIView() {
         didSet {
             oldValue.removeFromSuperview()
@@ -40,18 +46,21 @@ public final class BottomSheetView: UIView {
         }
     }
     
+    /// The corner radius of the bottom sheet
     public var cornerRadius: CGFloat = 16 {
         willSet {
             setCornerRadius(newValue)
         }
     }
     
+    /// The color of the handle
     public var dragHandleColor: UIColor = .systemFill {
         willSet {
             dragHandle.backgroundColor = newValue
         }
     }
     
+    /// The background color of the content view
     public var contentBackgroundColor: UIColor = .systemBackground {
         willSet {
             contentView.backgroundColor = newValue
@@ -142,7 +151,7 @@ public final class BottomSheetView: UIView {
 #if canImport(UIKit) && canImport(SwiftUI)
 import SwiftUI
 
-struct BottomSheetViewRepresentable: UIViewRepresentable {
+fileprivate struct BottomSheetViewRepresentable: UIViewRepresentable {
     typealias UIViewType = BottomSheetView
     
     var handleStyle: BottomSheetView.HandleStyle
@@ -157,7 +166,7 @@ struct BottomSheetViewRepresentable: UIViewRepresentable {
     }
 }
 
-struct BottomSheetViewPreview: PreviewProvider {
+fileprivate struct BottomSheetViewPreview: PreviewProvider {
     static var previews: some View {
         ForEach(BottomSheetView.HandleStyle.allCases, id: \.self) { style in
             BottomSheetViewRepresentable(handleStyle: style)
