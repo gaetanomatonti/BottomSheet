@@ -24,16 +24,16 @@ public final class BottomSheetView: UIView {
     public var handleStyle: HandleStyle = .none {
         willSet {
             setHandle(for: newValue)
-            setNeedsLayout()
+            setNeedsDisplay()
         }
     }
     
     public var sheetStyle: SheetStyle
         
     /// Ancdhors the top of the `contentView` to its superview
-    lazy var contentViewTopAnchor = contentView.topAnchor.constraint(equalTo: topAnchor)
+    lazy var contentViewTopAnchor = makeContentViewTopConstraint()
     /// Anchors the top of `contentView` to the bottom of `dragHandle`. Used for `outside` handle style.
-    lazy var contentViewTopAnchorToHandle = contentView.topAnchor.constraint(equalTo: dragHandle.bottomAnchor, constant: 16)
+    lazy var contentViewTopToHandleAnchor = makeContentTopToHandleContraint()
     
     private lazy var dragHandle: UIView = {
         let view = UIView()
@@ -48,19 +48,45 @@ public final class BottomSheetView: UIView {
             oldValue.removeFromSuperview()
             addSubview(contentView)
             
-            // Update constraints for the new view
-            contentViewTopAnchor = contentView.topAnchor.constraint(equalTo: safeAreaLayoutGuide.topAnchor)
-            contentViewTopAnchorToHandle = contentView.topAnchor.constraint(equalTo: dragHandle.bottomAnchor, constant: 16)
+            updateContentTopConstraints()
             
             setHandle(for: handleStyle)
-            setContentView()
+            setContentViewConstraints()
         }
+    }
+    
+    func makeContentViewTopConstraint() -> NSLayoutConstraint {
+        contentView.topAnchor.constraint(equalTo: safeAreaLayoutGuide.topAnchor)
+    }
+    
+    func makeContentTopToHandleContraint() -> NSLayoutConstraint {
+        contentView.topAnchor.constraint(equalTo: dragHandle.bottomAnchor, constant: contentInsetFromHandle)
+    }
+    
+    func updateContentTopConstraints() {
+        // Update constraints for the new view
+        contentViewTopAnchor = makeContentViewTopConstraint()
+        contentViewTopToHandleAnchor = makeContentTopToHandleContraint()
     }
     
     /// The corner radius of the bottom sheet
     public var cornerRadius: CGFloat = 16 {
         willSet {
-            setCornerRadius(newValue)
+            setNeedsDisplay()
+        }
+    }
+    
+    public var handleInset: CGFloat = 12 {
+        willSet {
+            updateContentTopConstraints()
+            setNeedsDisplay()
+        }
+    }
+    
+    public var contentInsetFromHandle: CGFloat = 16 {
+        willSet {
+            updateContentTopConstraints()
+            setNeedsLayout()
         }
     }
     
@@ -74,7 +100,7 @@ public final class BottomSheetView: UIView {
     /// The background color of the content view
     public var contentBackgroundColor: UIColor = .systemBackground {
         willSet {
-            contentView.backgroundColor = newValue
+            setNeedsDisplay()
         }
     }
 
@@ -86,7 +112,8 @@ public final class BottomSheetView: UIView {
         backgroundColor = .clear
 
         addSubview(contentView)
-        setContentView()
+        setContentViewConstraints()
+        setHandle(for: handleStyle)
     }
     
     override init(frame: CGRect) {
@@ -96,7 +123,7 @@ public final class BottomSheetView: UIView {
         backgroundColor = .clear
 
         addSubview(contentView)
-        setContentView()
+        setContentViewConstraints()
         
         setHandle(for: .none)
     }
@@ -108,25 +135,32 @@ public final class BottomSheetView: UIView {
         backgroundColor = .clear
 
         addSubview(contentView)
-        setContentView()
+        setContentViewConstraints()
         setHandle(for: .none)
+    }
+    
+    public override func draw(_ rect: CGRect) {
+        let handleHeight: CGFloat = handleStyle == .none ? 0 : dragHandle.frame.height
+        let topInset: CGFloat = handleStyle == .none ? 0 : handleHeight + contentInsetFromHandle
+        
+        let outsideHandleInsets = UIEdgeInsets(top: topInset, left: 0, bottom: 0, right: 0)
+        let rect = handleStyle == .outside ? rect.inset(by: outsideHandleInsets) : rect
+        
+        let path = UIBezierPath(
+            roundedRect: rect,
+            byRoundingCorners: [.topLeft, .topRight],
+            cornerRadii: CGSize(width: cornerRadius, height: cornerRadius)
+        )
+        
+        contentBackgroundColor.setFill()
+        path.fill()
     }
     
     public override func layoutSubviews() {
         super.layoutSubviews()
         
-        setCornerRadius(cornerRadius)
     }
-    
-    private func setContentView() {
-        contentView.backgroundColor = contentBackgroundColor
-        setContentViewConstraints()
-    }
-    
-    private func setCornerRadius(_ radius: CGFloat) {
-        contentView.roundCorners(corners: [.topLeft, .topRight], radius: radius)
-    }
-    
+        
     private func setContentViewConstraints() {
         contentView.translatesAutoresizingMaskIntoConstraints = false
         
@@ -145,17 +179,19 @@ public final class BottomSheetView: UIView {
             case .inside, .outside:
                 addSubview(dragHandle)
                 contentViewTopAnchor.isActive = style == .inside
-                contentViewTopAnchorToHandle.isActive = style == .outside
+                contentViewTopToHandleAnchor.isActive = style == .outside
                 
                 dragHandle.translatesAutoresizingMaskIntoConstraints = false
                 
                 NSLayoutConstraint.activate([
-                    dragHandle.topAnchor.constraint(equalTo: topAnchor, constant: style == .inside ? 12 : 0),
+                    dragHandle.topAnchor.constraint(equalTo: topAnchor, constant: style == .inside ? handleInset : 0),
                     dragHandle.centerXAnchor.constraint(equalTo: centerXAnchor),
                     dragHandle.widthAnchor.constraint(equalToConstant: 40),
                     dragHandle.heightAnchor.constraint(equalToConstant: 4)
                 ])
         }
+        
+        setNeedsDisplay()
     }
     
 }
@@ -165,13 +201,15 @@ public final class BottomSheetView: UIView {
 #if canImport(UIKit) && canImport(SwiftUI)
 import SwiftUI
 
-fileprivate struct BottomSheetViewRepresentable: UIViewRepresentable {
+struct BottomSheetViewRepresentable: UIViewRepresentable {
     typealias UIViewType = BottomSheetView
     
     var handleStyle: BottomSheetView.HandleStyle
     
     func makeUIView(context: Context) -> BottomSheetView {
         let view = BottomSheetView(handleStyle: handleStyle)
+        view.contentBackgroundColor = .systemGroupedBackground
+        view.cornerRadius = 32
         return view
     }
     
@@ -180,7 +218,7 @@ fileprivate struct BottomSheetViewRepresentable: UIViewRepresentable {
     }
 }
 
-fileprivate struct BottomSheetViewPreview: PreviewProvider {
+struct BottomSheetViewPreview: PreviewProvider {
     static var previews: some View {
         ForEach(BottomSheetView.HandleStyle.allCases, id: \.self) { style in
             BottomSheetViewRepresentable(handleStyle: style)
