@@ -2,8 +2,10 @@
 
 A Bottom Sheet component made in UIKit.
 
+![](Documentation/image.gif)
+
 ### To do:
-- [ ] Fix safe area layouts
+- [x] Fix safe area layouts
 - [x] Change BottomSheetView to draw the rounded layer rather than masking the content view
 
 ## Usage
