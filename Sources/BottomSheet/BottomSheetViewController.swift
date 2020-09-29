@@ -1,11 +1,11 @@
 #if canImport(UIKit)
 import UIKit
 
-public final class BottomSheetViewController: UIViewController {
+public class BottomSheetViewController: UIViewController {
     
     private let bottomSheetView = BottomSheetView()
     
-    public var sheetStyle: BottomSheetView.SheetStyle {
+    public var sheetStyle: BottomSheetView.SheetSizingStyle {
         get { bottomSheetView.sheetStyle }
         set { bottomSheetView.sheetStyle = newValue }
     }
@@ -55,9 +55,7 @@ public final class BottomSheetViewController: UIViewController {
         super.loadView()
 
         view = bottomSheetView
-        
-        guard let view = view as? BottomSheetView else { return }
-        view.accessibilityIdentifier = "Bottom Sheet"
+        bottomSheetView.accessibilityIdentifier = "Bottom Sheet"
     }
         
 }

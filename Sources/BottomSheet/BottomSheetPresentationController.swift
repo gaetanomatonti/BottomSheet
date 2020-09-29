@@ -93,7 +93,7 @@ public final class BottomSheetPresentationController: UIPresentationController {
     }
     
     /// The style of the bottom sheet
-    var sheetStyle: BottomSheetView.SheetStyle {
+    var sheetStyle: BottomSheetView.SheetSizingStyle {
         guard let presentedController = presentedViewController as? BottomSheetViewController else { return .toSafeAreaTop }
         return presentedController.sheetStyle
     }

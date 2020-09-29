@@ -2,8 +2,8 @@
 import UIKit
 
 public final class BottomSheetView: UIView {
-    /// The style of the sheet
-    public enum SheetStyle {
+    /// Defines a sizing style for the sheet
+    public enum SheetSizingStyle {
         /// Adapts the size of the bottom sheet to its content. If the content height is greater than the available frame height, it pins the sheet to the top safe area inset, like `toSafeAreaTop`.
         case adaptive
         /// Aligns the top of the bottom sheet to the top safe area inset.
@@ -28,7 +28,7 @@ public final class BottomSheetView: UIView {
         }
     }
     
-    public var sheetStyle: SheetStyle
+    public var sheetStyle: SheetSizingStyle
         
     /// Ancdhors the top of the `contentView` to its superview
     lazy var contentViewTopAnchor = makeContentViewTopConstraint()
@@ -104,7 +104,7 @@ public final class BottomSheetView: UIView {
         }
     }
 
-    public init(sheetStyle: SheetStyle = .toSafeAreaTop, handleStyle: HandleStyle = .none) {
+    public init(sheetStyle: SheetSizingStyle = .toSafeAreaTop, handleStyle: HandleStyle = .none) {
         self.sheetStyle = sheetStyle
         self.handleStyle = handleStyle
         super.init(frame: .zero)
