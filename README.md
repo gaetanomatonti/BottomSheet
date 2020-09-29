@@ -15,14 +15,14 @@ This controller uses `BottomSheetView` as its main view. To specify custom conte
 
 ```swift
 final class CustomBottomSheetViewController: BottomSheetViewController {
-	override func loadView() {
-		super.loadView()
+    override func loadView() {
+        super.loadView()
+        	
+        let myView = UIView()
+        myView.backgroundColor = .red
 		
-		let myView = UIView()
-		myView.backgroundColor = .red
-		
-		contentView = myView
-	}
+        contentView = myView
+    }
 }
 ```
 
@@ -30,9 +30,9 @@ final class CustomBottomSheetViewController: BottomSheetViewController {
 
 ```swift
 func presentBottomSheet() {
-	let controller = BottomSheetViewController()
-	controller.contentView = UIView()
-	...
+    let controller = BottomSheetViewController()
+    controller.contentView = UIView()
+    ...
 }
 ```
 
@@ -41,18 +41,18 @@ Instantiate your `BottomSheetViewController` and set the presenting controller a
 
 ```swift
 final class ViewController: UIViewController {
-	...
-	
-	func presentBottomSheet() {
-		let controller = BottomSheetViewController()
-		controller.transitioningDelegate = self
-		present(controller, animated: true, completion: nil)
-	}
+    ... 
+    
+    func presentBottomSheet() {
+        let controller = BottomSheetViewController()
+        controller.transitioningDelegate = self
+        present(controller, animated: true, completion: nil)
+    }
 }
 
 extension PresentingController: UIViewControllerTransitioningDelegate {
-	func presentationController(forPresented presented: UIViewController, presenting: UIViewController?, source: UIViewController) -> UIPresentationController? {
-		BottomSheetPresentationController(presentedViewController: presentedController, presenting: presenting)
+    func presentationController(forPresented presented: UIViewController, presenting: UIViewController?, source: UIViewController) -> UIPresentationController? {
+        BottomSheetPresentationController(presentedViewController: presentedController, presenting: presenting)
     }
 }
 ```
