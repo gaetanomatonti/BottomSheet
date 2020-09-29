@@ -35,6 +35,8 @@ public final class BottomSheetView: UIView {
     /// Anchors the top of `contentView` to the bottom of `dragHandle`. Used for `outside` handle style.
     lazy var contentViewTopToHandleAnchor = makeContentTopToHandleContraint()
     
+    lazy var contentViewBottomAnchor = contentView.bottomAnchor.constraint(equalTo: bottomAnchor, constant: -safeAreaInsets.bottom)
+    
     private lazy var dragHandle: UIView = {
         let view = UIView()
         view.backgroundColor = dragHandleColor
@@ -161,13 +163,23 @@ public final class BottomSheetView: UIView {
         
     }
         
+    public override func safeAreaInsetsDidChange() {
+        // Need to change the bottom anchor constant because safe area layout guide gets disabled when the frame is moved
+        if safeAreaInsets.bottom > -contentViewBottomAnchor.constant {
+            contentViewBottomAnchor.constant = -safeAreaInsets.bottom
+            setNeedsUpdateConstraints()
+        }
+    }
+    
     private func setContentViewConstraints() {
         contentView.translatesAutoresizingMaskIntoConstraints = false
+        
+        contentViewBottomAnchor = contentView.bottomAnchor.constraint(equalTo: bottomAnchor, constant: -safeAreaInsets.bottom)
         
         NSLayoutConstraint.activate([
             contentView.leadingAnchor.constraint(equalTo: safeAreaLayoutGuide.leadingAnchor),
             contentView.trailingAnchor.constraint(equalTo: safeAreaLayoutGuide.trailingAnchor),
-            contentView.bottomAnchor.constraint(equalTo: bottomAnchor)
+            contentViewBottomAnchor
         ])
     }
     
