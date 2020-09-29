@@ -24,6 +24,7 @@ public final class BottomSheetView: UIView {
     public var handleStyle: HandleStyle = .none {
         willSet {
             setHandle(for: newValue)
+            updateHandleConstraints(for: newValue)
             setNeedsDisplay()
         }
     }
@@ -35,7 +36,9 @@ public final class BottomSheetView: UIView {
     /// Anchors the top of `contentView` to the bottom of `dragHandle`. Used for `outside` handle style.
     lazy var contentViewTopToHandleAnchor = makeContentTopToHandleContraint()
     
-    lazy var contentViewBottomAnchor = contentView.bottomAnchor.constraint(equalTo: bottomAnchor, constant: -safeAreaInsets.bottom)
+    lazy var contentViewLeadingAnchor = contentView.leadingAnchor.constraint(equalTo: leadingAnchor, constant: contentInsets.left)
+    lazy var contentViewTrailingAnchor = contentView.trailingAnchor.constraint(equalTo: trailingAnchor, constant: -contentInsets.right)
+    lazy var contentViewBottomAnchor = contentView.bottomAnchor.constraint(equalTo: bottomAnchor, constant: bottomInset)
     
     private lazy var dragHandle: UIView = {
         let view = UIView()
@@ -50,27 +53,12 @@ public final class BottomSheetView: UIView {
             oldValue.removeFromSuperview()
             addSubview(contentView)
             
-            updateContentTopConstraints()
-            
             setHandle(for: handleStyle)
             setContentViewConstraints()
+            updateHandleConstraints(for: handleStyle)
         }
     }
-    
-    func makeContentViewTopConstraint() -> NSLayoutConstraint {
-        contentView.topAnchor.constraint(equalTo: safeAreaLayoutGuide.topAnchor)
-    }
-    
-    func makeContentTopToHandleContraint() -> NSLayoutConstraint {
-        contentView.topAnchor.constraint(equalTo: dragHandle.bottomAnchor, constant: contentInsetFromHandle)
-    }
-    
-    func updateContentTopConstraints() {
-        // Update constraints for the new view
-        contentViewTopAnchor = makeContentViewTopConstraint()
-        contentViewTopToHandleAnchor = makeContentTopToHandleContraint()
-    }
-    
+        
     /// The corner radius of the bottom sheet
     public var cornerRadius: CGFloat = 16 {
         willSet {
@@ -80,15 +68,8 @@ public final class BottomSheetView: UIView {
     
     public var handleInset: CGFloat = 12 {
         willSet {
-            updateContentTopConstraints()
+            // Needs to redraw the sheet rectangle
             setNeedsDisplay()
-        }
-    }
-    
-    public var contentInsetFromHandle: CGFloat = 16 {
-        willSet {
-            updateContentTopConstraints()
-            setNeedsLayout()
         }
     }
     
@@ -105,6 +86,18 @@ public final class BottomSheetView: UIView {
             setNeedsDisplay()
         }
     }
+    
+    public var contentInsets: UIEdgeInsets = .zero {
+        didSet {
+            updateContentConstraints()
+            setNeedsDisplay()
+            setNeedsUpdateConstraints()
+        }
+    }
+    
+    private var bottomInset: CGFloat {
+        safeAreaInsets.bottom + contentInsets.bottom
+    }
 
     public init(sheetStyle: SheetSizingStyle = .toSafeAreaTop, handleStyle: HandleStyle = .none) {
         self.sheetStyle = sheetStyle
@@ -116,6 +109,7 @@ public final class BottomSheetView: UIView {
         addSubview(contentView)
         setContentViewConstraints()
         setHandle(for: handleStyle)
+        updateHandleConstraints(for: handleStyle)
     }
     
     override init(frame: CGRect) {
@@ -128,6 +122,7 @@ public final class BottomSheetView: UIView {
         setContentViewConstraints()
         
         setHandle(for: .none)
+        updateHandleConstraints(for: handleStyle)
     }
     
     required init?(coder: NSCoder) {
@@ -139,11 +134,19 @@ public final class BottomSheetView: UIView {
         addSubview(contentView)
         setContentViewConstraints()
         setHandle(for: .none)
+        updateHandleConstraints(for: handleStyle)
+    }
+    
+    var handleBottomInset: CGFloat {
+        switch handleStyle {
+            case .outside: return 12
+            default: return 0
+        }
     }
     
     public override func draw(_ rect: CGRect) {
         let handleHeight: CGFloat = handleStyle == .none ? 0 : dragHandle.frame.height
-        let topInset: CGFloat = handleStyle == .none ? 0 : handleHeight + contentInsetFromHandle
+        let topInset: CGFloat = handleStyle == .none ? 0 : handleHeight + handleBottomInset
         
         let outsideHandleInsets = UIEdgeInsets(top: topInset, left: 0, bottom: 0, right: 0)
         let rect = handleStyle == .outside ? rect.inset(by: outsideHandleInsets) : rect
@@ -162,23 +165,43 @@ public final class BottomSheetView: UIView {
         super.layoutSubviews()
         
     }
-        
+            
     public override func safeAreaInsetsDidChange() {
         // Need to change the bottom anchor constant because safe area layout guide gets disabled when the frame is moved
         if safeAreaInsets.bottom > -contentViewBottomAnchor.constant {
-            contentViewBottomAnchor.constant = -safeAreaInsets.bottom
+            contentViewBottomAnchor.constant = -bottomInset
             setNeedsUpdateConstraints()
         }
+    }
+    
+    func makeContentViewTopConstraint() -> NSLayoutConstraint {
+        contentView.topAnchor.constraint(equalTo: safeAreaLayoutGuide.topAnchor, constant: contentInsets.top)
+    }
+    
+    func makeContentTopToHandleContraint() -> NSLayoutConstraint {
+        contentView.topAnchor.constraint(equalTo: dragHandle.bottomAnchor, constant: contentInsets.top + handleBottomInset)
+    }
+        
+    private func updateContentConstraints() {
+        contentViewTopAnchor.constant = contentInsets.top
+        contentViewTopToHandleAnchor.constant = contentInsets.top + handleBottomInset
+        contentViewLeadingAnchor.constant = contentInsets.left
+        contentViewTrailingAnchor.constant = -contentInsets.right
+        contentViewBottomAnchor.constant = -bottomInset
     }
     
     private func setContentViewConstraints() {
         contentView.translatesAutoresizingMaskIntoConstraints = false
         
-        contentViewBottomAnchor = contentView.bottomAnchor.constraint(equalTo: bottomAnchor, constant: -safeAreaInsets.bottom)
-        
+        contentViewTopAnchor = contentView.topAnchor.constraint(equalTo: topAnchor, constant: contentInsets.top)
+        contentViewTopToHandleAnchor = contentView.topAnchor.constraint(equalTo: dragHandle.bottomAnchor, constant: contentInsets.top + handleBottomInset)
+        contentViewLeadingAnchor = contentView.leadingAnchor.constraint(equalTo: leadingAnchor, constant: contentInsets.left)
+        contentViewTrailingAnchor = contentView.trailingAnchor.constraint(equalTo: trailingAnchor, constant: -contentInsets.right)
+        contentViewBottomAnchor = contentView.bottomAnchor.constraint(equalTo: bottomAnchor, constant: -bottomInset)
+
         NSLayoutConstraint.activate([
-            contentView.leadingAnchor.constraint(equalTo: safeAreaLayoutGuide.leadingAnchor),
-            contentView.trailingAnchor.constraint(equalTo: safeAreaLayoutGuide.trailingAnchor),
+            contentViewLeadingAnchor,
+            contentViewTrailingAnchor,
             contentViewBottomAnchor
         ])
     }
@@ -187,12 +210,9 @@ public final class BottomSheetView: UIView {
         switch style {
             case .none:
                 dragHandle.removeFromSuperview()
-                contentViewTopAnchor.isActive = true
             case .inside, .outside:
                 addSubview(dragHandle)
-                contentViewTopAnchor.isActive = style == .inside
-                contentViewTopToHandleAnchor.isActive = style == .outside
-                
+                    
                 dragHandle.translatesAutoresizingMaskIntoConstraints = false
                 
                 NSLayoutConstraint.activate([
@@ -204,6 +224,16 @@ public final class BottomSheetView: UIView {
         }
         
         setNeedsDisplay()
+    }
+    
+    private func updateHandleConstraints(for style: HandleStyle) {
+        switch style {
+            case .none:
+                contentViewTopAnchor.isActive = true
+            case .inside, .outside:
+                contentViewTopAnchor.isActive = false
+                contentViewTopToHandleAnchor.isActive = true
+        }
     }
     
 }
