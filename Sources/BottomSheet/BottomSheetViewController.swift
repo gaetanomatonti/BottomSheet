@@ -41,19 +41,22 @@ public class BottomSheetViewController: UIViewController {
         self.handleStyle = handleStyle
         self.sheetCornerRadius = cornerRadius
         
-        modalPresentationStyle = .custom
+        commonInit()
     }
     
     public override init(nibName nibNameOrNil: String?, bundle nibBundleOrNil: Bundle?) {
         super.init(nibName: nil, bundle: nil)
-                
-        modalPresentationStyle = .custom
+        commonInit()
     }
     
     public required init?(coder: NSCoder) {
         super.init(coder: coder)
-        
+        commonInit()
+    }
+    
+    private func commonInit() {
         modalPresentationStyle = .custom
+        transitioningDelegate = (UIApplication.shared.delegate as? BottomSheetPresenter)?.bottomSheetTransitioningDelegate
     }
     
     public override func loadView() {
