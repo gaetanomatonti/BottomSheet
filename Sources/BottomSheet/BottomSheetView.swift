@@ -29,7 +29,7 @@ public final class BottomSheetView: UIView {
         }
     }
     
-    public var sheetStyle: SheetSizingStyle
+    public var sheetSizingStyle: SheetSizingStyle
         
     /// Ancdhors the top of the `contentView` to its superview
     lazy var contentViewTopAnchor = makeContentViewTopConstraint()
@@ -99,8 +99,8 @@ public final class BottomSheetView: UIView {
         safeAreaInsets.bottom + contentInsets.bottom
     }
 
-    public init(sheetStyle: SheetSizingStyle = .toSafeAreaTop, handleStyle: HandleStyle = .none) {
-        self.sheetStyle = sheetStyle
+    public init(sheetSizingStyle: SheetSizingStyle = .toSafeAreaTop, handleStyle: HandleStyle = .none) {
+        self.sheetSizingStyle = sheetSizingStyle
         self.handleStyle = handleStyle
         super.init(frame: .zero)
         
@@ -113,7 +113,7 @@ public final class BottomSheetView: UIView {
     }
     
     override init(frame: CGRect) {
-        self.sheetStyle = .toSafeAreaTop
+        self.sheetSizingStyle = .toSafeAreaTop
         super.init(frame: frame)
         
         backgroundColor = .clear
@@ -126,7 +126,7 @@ public final class BottomSheetView: UIView {
     }
     
     required init?(coder: NSCoder) {
-        self.sheetStyle = .toSafeAreaTop
+        self.sheetSizingStyle = .toSafeAreaTop
         super.init(coder: coder)
 
         backgroundColor = .clear

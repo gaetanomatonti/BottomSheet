@@ -5,9 +5,9 @@ public class BottomSheetViewController: UIViewController {
     
     private let bottomSheetView = BottomSheetView()
     
-    public var sheetStyle: BottomSheetView.SheetSizingStyle {
-        get { bottomSheetView.sheetStyle }
-        set { bottomSheetView.sheetStyle = newValue }
+    public var sheetSizingStyle: BottomSheetView.SheetSizingStyle {
+        get { bottomSheetView.sheetSizingStyle }
+        set { bottomSheetView.sheetSizingStyle = newValue }
     }
     
     public var handleStyle: BottomSheetView.HandleStyle {
