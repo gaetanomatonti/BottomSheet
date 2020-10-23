@@ -2,7 +2,33 @@
 
 A Bottom Sheet component made in UIKit.
 
-![](Documentation/image.gif)
+![][bottom_sheet_preview]
+
+## Table of contents
+<!--ts-->
+* [Installation](#installation)
+* [Usage](#usage)
+    * [`BottomSheetViewController`](#bottomsheetviewcontroller)
+    * [Presentation](#presentation)
+* [Documentation](#documentation)
+<!--te-->
+
+## Installation
+### Swift Package Manager
+#### Xcode Project
+To add a package dependency to your Xcode project, select File > Swift Packages > Add Package Dependency and enter the repository URL:
+
+ `https://github.com/gaetanomatonti/BottomSheet`
+ 
+#### Swift Package
+
+Edit your `Package.swift` file and add the repository URL to the  dependencies.
+
+```swift
+dependencies: [
+    .package(url: "https://github.com/gaetanomatonti/BottomSheet", .upToNextMajor(from: "0.2.0"))
+]
+```
 
 ## Usage
 
@@ -34,43 +60,7 @@ func presentBottomSheet() {
 }
 ```
 
-### Presentation
-Make your app delegate adopt the `BottomSheetPresenter` protocol and instantiate a `BottomSheetTransitioningDelegate` object.
+## Documentation
+You can find a more detailed documentation [here](Documentation/Index.md).
 
-```swift
-@UIApplicationMain
-class AppDelegate: UIResponder, UIApplicationDelegate, BottomSheetPresenter {
-    let bottomSheetTransitioningDelegate = BottomSheetTransitioningDelegate()
-    ... 
-}
-```
-
-Instantiate your `BottomSheetViewController` and present it.
-
-```swift
-final class ViewController: UIViewController {
-    ... 
-    
-    func presentBottomSheet() {
-        let controller = BottomSheetViewController()
-        present(controller, animated: true, completion: nil)
-    }
-}
-```
-
-That's it!
-
-#### Alternative method
-Adopt the `BottomSheetPresenter` in the presenting controller and assign the `bottomSheetTransitioningDelegate` to your bottom sheet controller.
-
-```swift
-final class ViewController: UIViewController, BottomSheetPresenter {
-    let bottomSheetTransitioningDelegate = BottomSheetTransitioningDelegate()
-    
-    func presentBottomSheet() {
-        let controller = BottomSheetViewController()
-        controller.transitioningDelegate = bottomSheetTransitioningDelegate
-        present(controller, animated: true, completion: nil)
-    }
-}
-```
+[bottom_sheet_preview]: Documentation/images/bottomsheet_preview.gif "BottomSheet Preview"
