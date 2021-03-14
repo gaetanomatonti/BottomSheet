@@ -91,6 +91,7 @@ extension ExampleBottomSheetView {
     label.font = .preferredFont(forTextStyle: .largeTitle)
     label.numberOfLines = 0
     label.textAlignment = .center
+    label.setContentHuggingPriority(.defaultHigh, for: .vertical)
   }
   
   static func styleDescriptionLabel(_ label: UILabel, with text: String?) {
