@@ -15,21 +15,22 @@ public final class BottomSheetView: UIView {
   /// The sizing style of the sheet.
   public var sheetSizingStyle: SheetSizingStyle
     
-  /// The corner radius of the bottom sheet
+  /// The corner radius of the bottom sheet.
   public var cornerRadius: CGFloat = 16 {
     willSet {
       layer.cornerRadius = newValue
     }
   }
   
-  public var handleInset: CGFloat = 12 {
+  /// The top inset of the handle from the sheet. Used when `handleStyle` is set to `inside`.
+  public var handleTopInset: CGFloat = 12 {
     willSet {
       // Needs to redraw the sheet rectangle
       setNeedsDisplay()
     }
   }
   
-  /// The color of the handle
+  /// The color of the handle.
   public var dragHandleColor: UIColor? {
     didSet {
       style()
@@ -216,7 +217,7 @@ public final class BottomSheetView: UIView {
         dragHandle.translatesAutoresizingMaskIntoConstraints = false
         
         NSLayoutConstraint.activate([
-          dragHandle.topAnchor.constraint(equalTo: topAnchor, constant: style == .inside ? handleInset : 0),
+          dragHandle.topAnchor.constraint(equalTo: topAnchor, constant: style == .inside ? handleTopInset : 0),
           dragHandle.centerXAnchor.constraint(equalTo: centerXAnchor),
           dragHandle.widthAnchor.constraint(equalToConstant: 40),
           dragHandle.heightAnchor.constraint(equalToConstant: 4)

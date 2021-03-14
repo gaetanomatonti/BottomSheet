@@ -1,6 +1,7 @@
 #if canImport(UIKit)
 import UIKit
 
+/// A transitioning delegate object providing custom transiton and presentation behaviour for `BottomSheetViewController`.
 public final class BottomSheetTransitioningDelegate: NSObject, UIViewControllerTransitioningDelegate {
   public func presentationController(
     forPresented presented: UIViewController,

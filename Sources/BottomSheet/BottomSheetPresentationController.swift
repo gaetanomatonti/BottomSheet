@@ -1,12 +1,15 @@
 #if canImport(UIKit)
 import UIKit
 
+/// An object that manages the transition animations and the presentation of `BottomSheetViewController`.
 public final class BottomSheetPresentationController: UIPresentationController {
   
+  /// The center of the presented view. Used to restore the original position of the bottom sheet after dragging without dismiss.
   private var presentedViewCenter: CGPoint = .zero
   
   // MARK: - Computed Properties
   
+  /// The frame of the presented view according to the bottom sheet sizing style.
   public override var frameOfPresentedViewInContainerView: CGRect {
     switch sheetSizingStyle {
       case .adaptive: return adaptiveFrame
@@ -15,6 +18,7 @@ public final class BottomSheetPresentationController: UIPresentationController {
     }
   }
   
+  /// The frame for the `adaptive` sheet sizing style.
   private var adaptiveFrame: CGRect {
     guard let containerView = containerView, let presentedView = presentedView else { return .zero }
     
@@ -53,6 +57,7 @@ public final class BottomSheetPresentationController: UIPresentationController {
     return frame
   }
   
+  /// The frame for the `toSafeArea` sheet sizing style.
   private var toSafeAreaTopFrame: CGRect {
     guard let containerView = containerView else { return .zero }
     
@@ -73,6 +78,7 @@ public final class BottomSheetPresentationController: UIPresentationController {
   
   // MARK: - UI Elements
   
+  /// The blur view showing as the background of the bottom sheet.
   private lazy var dimmingView: UIVisualEffectView = {
     let effect: UIBlurEffect
     
@@ -88,19 +94,24 @@ public final class BottomSheetPresentationController: UIPresentationController {
     return view
   }()
   
+  /// A pan gesture handling the dragging of the bottom sheet.
   private lazy var panGesture: UIPanGestureRecognizer = {
-    UIPanGestureRecognizer(target: self, action: #selector(drag(_:)))
+    UIPanGestureRecognizer(target: self, action: #selector(drag))
   }()
   
   // MARK: - Init
   
+  /// Initializes and returns a presentation controller for transitioning between a presenting controller and a `BottomSheetViewController`.
+  /// - Parameters:
+  ///   - presentedViewController: The `BottomSheetViewController` being presented modally.
+  ///   - presentingViewController: The view controller whose content represents the starting point of the transition.
   public init(presentedViewController: BottomSheetViewController, presenting presentingViewController: UIViewController?) {
     super.init(presentedViewController: presentedViewController, presenting: presentingViewController)
   }
   
   // MARK: - Functions
   
-  /// Calculates the frame of the view for a fixed height.
+  /// Calculates the frame of the view for the `fixed` sheet sizing style.
   /// - Parameter height: The desired height of the bottom sheet.
   /// - Returns: A `CGRect` describing the frame of the bottom sheet.
   private func fixedFrame(_ height: CGFloat) -> CGRect {
@@ -166,67 +177,73 @@ public final class BottomSheetPresentationController: UIPresentationController {
     })
   }
   
+  /// Dismisses the view controller.
   @objc private func dismiss() {
     presentedViewController.dismiss(animated: true, completion: nil)
   }
   
+  /// Handles the drag gesture on the bottom sheet.
+  /// This action moves the frame of the bottom sheet following the user's finger.
+  /// Dragging the view after a certain threshold will dismiss it.
+  ///
+  /// - Parameters:
+  ///   - gesture: The `UIPanGestureRecognizer` on the bottom sheet.
   @objc private func drag(_ gesture: UIPanGestureRecognizer) {
     guard let presentedView = presentedView, let presenterView = containerView else { return }
     
-    switch gesture.state {
-      case .changed:
-        presentingViewController.view.bringSubviewToFront(presentedView)
-        let translation = gesture.translation(in: presentingViewController.view)
-        let y = presentedView.center.y + translation.y
-        
-        let gap = presenterView.bounds.height - presentedView.frame.height
-        let shouldBounce = y - gap / 2 > presentingViewController.view.center.y
-        
-        if shouldBounce {
-          presentedView.center = CGPoint(x: presentedView.center.x, y: y)
-        }
-        
-        gesture.setTranslation(.zero, in: presentingViewController.view)
-      case .ended:
-        let height = presentingViewController.view.frame.height
-        let position = presentedView.convert(presentingViewController.view.frame, to: nil).origin.y
-        
-        let velocity = gesture.velocity(in: presentedView)
-        let targetVelocityHeight = presentedView.frame.height * 2
-        let targetDragHeight = presentedView.frame.height * 3 / 4
-        
-        if velocity.y > targetVelocityHeight || height - position < targetDragHeight {
-          dismiss()
-        } else {
-          restorePosition()
-          restoreDimming()
-        }
-        
-        gesture.setTranslation(.zero, in: presentingViewController.view)
-      default:
-        break
+    defer {
+      gesture.setTranslation(.zero, in: presentingViewController.view)
+    }
+    
+    if case .changed = gesture.state {
+      presentingViewController.view.bringSubviewToFront(presentedView)
+      let translation = gesture.translation(in: presentingViewController.view)
+      let y = presentedView.center.y + translation.y
+      
+      let gap = presenterView.bounds.height - presentedView.frame.height
+      
+      let shouldBounce = y - gap / 2 > presentingViewController.view.center.y
+      
+      if shouldBounce {
+        presentedView.center = CGPoint(x: presentedView.center.x, y: y)
+      }
+      
+      return
+    }
+    
+    if case .ended = gesture.state {
+      let height = presentingViewController.view.frame.height
+      let position = presentedView.convert(presentingViewController.view.frame, to: nil).origin.y
+      
+      let velocity = gesture.velocity(in: presentedView)
+      let targetVelocityHeight = presentedView.frame.height * 2
+      let targetDragHeight = presentedView.frame.height * 3 / 4
+      
+      if velocity.y > targetVelocityHeight || height - position < targetDragHeight {
+        dismiss()
+      } else {
+        restorePosition()
+        restoreDimming()
+      }
+      
+      return
     }
   }
   
+  /// Restores the bottom sheet to its original position. Used when the user is dragging but not enough to dismiss the bottom sheet.
   private func restorePosition() {
     guard let presentedView = presentedView else { return }
     
-    UIView.animate(withDuration: 0.25) { [weak self] in
-      guard let self = self else { return }
-      presentedView.center = self.presentedViewCenter
+    UIView.animate(withDuration: 0.25) { [self] in
+      presentedView.center = presentedViewCenter
     }
   }
   
+  /// Restores the opacity of the dimming background view. Used when the user is dragging but not enough to dismiss the bottom sheet.
   private func restoreDimming() {
-    UIView.animate(withDuration: 0.25) { [weak self] in
-      guard let self = self else { return }
-      self.dimmingView.alpha = 1.0
+    UIView.animate(withDuration: 0.25) { [self] in
+      dimmingView.alpha = 1.0
     }
   }
-  
-  private func normalize<T: FloatingPoint>(value: T, min: T, max: T) -> T {
-    (value - min) / (max - min)
-  }
-  
 }
 #endif
