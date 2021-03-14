@@ -1,5 +1,5 @@
 #if canImport(UIKit)
-public protocol BottomSheetPresenter: class {
-    var bottomSheetTransitioningDelegate: BottomSheetTransitioningDelegate { get }
+public protocol BottomSheetPresenter: AnyObject {
+  var bottomSheetTransitioningDelegate: BottomSheetTransitioningDelegate { get }
 }
 #endif
