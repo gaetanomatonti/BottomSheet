@@ -1,94 +1,87 @@
 #if canImport(UIKit)
 import UIKit
 
-public class BottomSheetViewController: UIViewController {
+/// An object to control `BottomSheetView` customization and behaviour.
+public final class BottomSheetViewController: UIViewController {
+  
+  /// The `BottomSheetView` containing user content.
+  private let bottomSheetView: BottomSheetView = {
+    let view = BottomSheetView()
+    view.accessibilityIdentifier = "BottomSheetContainer"
+    return view
+  }()
+  
+  /// The sizing style of the sheet.
+  public var sheetSizingStyle: BottomSheetView.SheetSizingStyle {
+    get { bottomSheetView.sheetSizingStyle }
+    set { bottomSheetView.sheetSizingStyle = newValue }
+  }
+  
+  /// The style of the handle. Defaults to `none`.
+  public var handleStyle: BottomSheetView.HandleStyle {
+    get { bottomSheetView.handleStyle }
+    set { bottomSheetView.handleStyle = newValue }
+  }
+  
+  /// The color of the handle.
+  public var handleColor: UIColor? {
+    get { bottomSheetView.dragHandleColor }
+    set { bottomSheetView.dragHandleColor = newValue }
+  }
+  
+  /// The content of the bottom sheet.
+  public var contentView: UIView {
+    get { bottomSheetView.contentView }
+    set { bottomSheetView.contentView = newValue }
+  }
+  
+  /// The corner radius of the bottom sheet.
+  public var sheetCornerRadius: CGFloat {
+    get { bottomSheetView.cornerRadius }
+    set { bottomSheetView.cornerRadius = newValue }
+  }
+  
+  /// The insets the content view should be inset by in its container.
+  public var contentInsets: UIEdgeInsets {
+    get { bottomSheetView.contentInsets }
+    set { bottomSheetView.contentInsets = newValue }
+  }
+  
+  // MARK: - Init
+  
+  /// Creates a `BottomSheetViewController` with the specified content view.
+  /// - Parameter contentView: The content view to place into the bottom sheet.
+  public convenience init(contentView: UIView) {
+    self.init(nibName: nil, bundle: nil)
     
-    private let bottomSheetView = BottomSheetView()
+    self.contentView = contentView
     
-    public var sheetSizingStyle: BottomSheetView.SheetSizingStyle {
-        get { bottomSheetView.sheetSizingStyle }
-        set { bottomSheetView.sheetSizingStyle = newValue }
-    }
+    setup()
+  }
+  
+  public override init(nibName nibNameOrNil: String?, bundle nibBundleOrNil: Bundle?) {
+    super.init(nibName: nibNameOrNil, bundle: nibBundleOrNil)
     
-    public var handleStyle: BottomSheetView.HandleStyle {
-        get { bottomSheetView.handleStyle }
-        set { bottomSheetView.handleStyle = newValue }
-    }
+    setup()
+  }
+  
+  public required init?(coder: NSCoder) {
+    super.init(coder: coder)
     
-    public var contentView: UIView {
-        get { bottomSheetView.contentView }
-        set { bottomSheetView.contentView = newValue }
-    }
-    
-    public var contentBackgroundColor: UIColor {
-        get { bottomSheetView.contentBackgroundColor }
-        set { bottomSheetView.contentBackgroundColor = newValue }
-    }
-    
-    public var sheetCornerRadius: CGFloat {
-        get { bottomSheetView.cornerRadius }
-        set { bottomSheetView.cornerRadius = newValue }
-    }
-    
-    public var contentInsets: UIEdgeInsets {
-        get { bottomSheetView.contentInsets }
-        set { bottomSheetView.contentInsets = newValue }
-    }
-    
-    public init(handleStyle: BottomSheetView.HandleStyle = .none, cornerRadius: CGFloat = 16) {
-        super.init(nibName: nil, bundle: nil)
-        
-        self.handleStyle = handleStyle
-        self.sheetCornerRadius = cornerRadius
-        
-        commonInit()
-    }
-    
-    public override init(nibName nibNameOrNil: String?, bundle nibBundleOrNil: Bundle?) {
-        super.init(nibName: nil, bundle: nil)
-        commonInit()
-    }
-    
-    public required init?(coder: NSCoder) {
-        super.init(coder: coder)
-        commonInit()
-    }
-    
-    private func commonInit() {
-        modalPresentationStyle = .custom
-        transitioningDelegate = (UIApplication.shared.delegate as? BottomSheetPresenter)?.bottomSheetTransitioningDelegate
-    }
-    
-    public override func loadView() {
-        super.loadView()
-
-        view = bottomSheetView
-        bottomSheetView.accessibilityIdentifier = "Bottom Sheet"
-    }
-        
-}
-#endif
-
-#if canImport(UIKit) && canImport(SwiftUI)
-import SwiftUI
-
-struct BottomSheetViewControllerRepresentable: UIViewControllerRepresentable {
-    typealias UIViewControllerType = BottomSheetViewController
-    
-    func makeUIViewController(context: Context) -> BottomSheetViewController {
-        let controller = BottomSheetViewController()
-        controller.contentView.backgroundColor = .systemPink
-        return controller
-    }
-    
-    func updateUIViewController(_ uiViewController: BottomSheetViewController, context: Context) {
-        
-    }
-}
-
-struct BottomSheetViewControllerPreview: PreviewProvider {
-    static var previews: some View {
-        BottomSheetViewControllerRepresentable()
-    }
+    setup()
+  }
+  
+  // MARK: - Lifecycle
+  
+  public override func loadView() {
+    view = bottomSheetView
+  }
+  
+  // MARK: - SSUL
+  
+  private func setup() {
+    modalPresentationStyle = .custom
+    transitioningDelegate = (UIApplication.shared.delegate as? BottomSheetPresenter)?.bottomSheetTransitioningDelegate
+  }
 }
 #endif
