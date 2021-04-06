@@ -2,16 +2,30 @@
 import UIKit
 
 /// An object that manages the transition animations and the presentation of `BottomSheetViewController`.
-public final class BottomSheetPresentationController: UIPresentationController {
+public final class SheetPresentationController: UIPresentationController {
+  
+  // MARK: - Stored Properties
   
   /// The center of the presented view. Used to restore the original position of the bottom sheet after dragging without dismiss.
   private var presentedViewCenter: CGPoint = .zero
-  
+    
   // MARK: - Computed Properties
+  
+  private var sheetPresentableViewController: SheetPresentable? {
+    presentedViewController as? SheetPresentable
+  }
+  
+  private var sheetPresentableView: SheetPresentable? {
+    presentedView as? SheetPresentable
+  }
+  
+  private var sheetConfiguration: SheetConfiguration {
+    return sheetPresentableViewController ?? sheetPresentableView ?? SheetPresentationController.defaultConfiguration
+  }
   
   /// The frame of the presented view according to the bottom sheet sizing style.
   public override var frameOfPresentedViewInContainerView: CGRect {
-    switch sheetSizingStyle {
+    switch sheetConfiguration.sheetSizingStyle {
       case .adaptive: return adaptiveFrame
       case .toSafeAreaTop: return toSafeAreaTopFrame
       case .fixed(let height): return fixedFrame(height)
@@ -61,22 +75,28 @@ public final class BottomSheetPresentationController: UIPresentationController {
   private var toSafeAreaTopFrame: CGRect {
     guard let containerView = containerView else { return .zero }
     
-    let safeAreaFrame = containerView.bounds.inset(by: containerView.safeAreaInsets)
-    let targetWidth = safeAreaFrame.width
+    let topInset = containerView.safeAreaInsets.top
     
-    var frame = safeAreaFrame
-    frame.origin.y += containerView.safeAreaInsets.bottom
-    frame.size.width = targetWidth
+    var frame = containerView.frame
+    frame.origin.y += topInset
+    frame.size.height -= topInset
     return frame
-  }
-    
-  /// The style of the bottom sheet
-  var sheetSizingStyle: BottomSheetView.SheetSizingStyle {
-    guard let presentedController = presentedViewController as? BottomSheetViewController else { return .toSafeAreaTop }
-    return presentedController.sheetSizingStyle
   }
   
   // MARK: - UI Elements
+  
+  /// A grabber element.
+  private lazy var grabber: UIView = {
+    let view = UIView()
+    if #available(iOS 13.0, *) {
+      view.backgroundColor = .tertiaryLabel
+    } else {
+      view.backgroundColor = UIColor.darkGray.withAlphaComponent(0.3)
+    }
+    view.frame.size = sheetConfiguration.grabberSize
+    view.layer.cornerRadius = sheetConfiguration.grabberSize.height / 2
+    return view
+  }()
   
   /// The blur view showing as the background of the bottom sheet.
   private lazy var dimmingView: UIVisualEffectView = {
@@ -98,17 +118,7 @@ public final class BottomSheetPresentationController: UIPresentationController {
   private lazy var panGesture: UIPanGestureRecognizer = {
     UIPanGestureRecognizer(target: self, action: #selector(drag))
   }()
-  
-  // MARK: - Init
-  
-  /// Initializes and returns a presentation controller for transitioning between a presenting controller and a `BottomSheetViewController`.
-  /// - Parameters:
-  ///   - presentedViewController: The `BottomSheetViewController` being presented modally.
-  ///   - presentingViewController: The view controller whose content represents the starting point of the transition.
-  public init(presentedViewController: BottomSheetViewController, presenting presentingViewController: UIViewController?) {
-    super.init(presentedViewController: presentedViewController, presenting: presentingViewController)
-  }
-  
+    
   // MARK: - Functions
   
   /// Calculates the frame of the view for the `fixed` sheet sizing style.
@@ -155,23 +165,47 @@ public final class BottomSheetPresentationController: UIPresentationController {
     presentedView.center = CGPoint(x: presenterView.center.x, y: presenterView.center.y + gap / 2)
     presentedViewCenter = presentedView.center
     
+    if sheetConfiguration.wantsGrabber {
+      grabber.center.x = presentedView.center.x
+      grabber.frame.origin.y = sheetConfiguration.topGrabberInset
+      
+      let additionalSafeAreaTopInset = sheetConfiguration.topGrabberInset + grabber.frame.height + sheetConfiguration.bottomGrabberInset
+      presentedViewController.additionalSafeAreaInsets.top = additionalSafeAreaTopInset
+    }
+      
     dimmingView.frame = presenterView.bounds
   }
   
   public override func presentationTransitionWillBegin() {
+    presentedView?.layer.maskedCorners = [.layerMinXMinYCorner, .layerMaxXMinYCorner]
+    
+    if sheetConfiguration.wantsGrabber {
+      presentedView?.addSubview(grabber)
+    }
+    
     dimmingView.alpha = 0
     
     guard let presenterView = containerView else { return }
     presenterView.addSubview(dimmingView)
     
     presentedViewController.transitionCoordinator?.animate(alongsideTransition: { [weak self] context in
-      self?.dimmingView.alpha = 1
+      guard let self = self else {
+        return
+      }
+      
+      self.dimmingView.alpha = 1
+      self.presentedView?.layer.cornerRadius = self.sheetConfiguration.preferredCornerRadius
     }, completion: nil)
   }
   
   public override func dismissalTransitionWillBegin() {
     presentedViewController.transitionCoordinator?.animate(alongsideTransition: { [weak self] context in
-      self?.dimmingView.alpha = 0
+      guard let self = self else {
+        return
+      }
+      
+      self.dimmingView.alpha = 0
+      self.presentedView?.layer.cornerRadius = self.sheetConfiguration.dismissCornerRadius
     }, completion: { [weak self] context in
       self?.dimmingView.removeFromSuperview()
     })
@@ -246,4 +280,25 @@ public final class BottomSheetPresentationController: UIPresentationController {
     }
   }
 }
+
+extension SheetPresentationController {
+  struct SheetPresentationControllerConfiguration: SheetConfiguration {
+    var sheetSizingStyle: SheetSizingStyle = .toSafeAreaTop
+    
+    var wantsGrabber: Bool { false }
+    
+    var grabberSize: CGSize { CGSize(width: 32, height: 4) }
+    
+    var topGrabberInset: CGFloat { 8 }
+    
+    var bottomGrabberInset: CGFloat { 8 }
+    
+    var preferredCornerRadius: CGFloat { 12 }
+    
+    var dismissCornerRadius: CGFloat { 12 }
+  }
+  
+  static let defaultConfiguration = SheetPresentationControllerConfiguration(sheetSizingStyle: .toSafeAreaTop)
+}
+
 #endif
