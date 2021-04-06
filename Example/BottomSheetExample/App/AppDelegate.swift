@@ -9,10 +9,10 @@ import UIKit
 import BottomSheet
 
 @UIApplicationMain
-class AppDelegate: UIResponder, UIApplicationDelegate, BottomSheetPresenter {
+class AppDelegate: UIResponder, UIApplicationDelegate, SheetPresenter {
   var window: UIWindow?
   
-  let bottomSheetTransitioningDelegate = BottomSheetTransitioningDelegate()
+  let bottomSheetTransitioningDelegate = SheetTransitioningDelegate()
 
   func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]?) -> Bool {
     window = UIWindow(frame: UIScreen.main.bounds)

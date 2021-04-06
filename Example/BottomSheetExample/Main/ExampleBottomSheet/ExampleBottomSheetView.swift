@@ -6,8 +6,15 @@
 //
 
 import UIKit
+import BottomSheet
 
-final class ExampleBottomSheetView: UIView {
+final class ExampleBottomSheetView: UIView, SheetPresentable {
+  
+  var sheetSizingStyle: SheetSizingStyle = .adaptive
+  
+  var preferredCornerRadius: CGFloat { 32 }
+  
+  var wantsGrabber: Bool { true }
   
   // MARK: - UI Elements
   
@@ -67,10 +74,10 @@ final class ExampleBottomSheetView: UIView {
     contentStack.translatesAutoresizingMaskIntoConstraints = false
     
     NSLayoutConstraint.activate([
-      contentStack.topAnchor.constraint(equalTo: topAnchor),
-      contentStack.leadingAnchor.constraint(equalTo: leadingAnchor),
-      contentStack.trailingAnchor.constraint(equalTo: trailingAnchor),
-      contentStack.bottomAnchor.constraint(equalTo: bottomAnchor)
+      contentStack.topAnchor.constraint(equalTo: safeAreaLayoutGuide.topAnchor),
+      contentStack.leadingAnchor.constraint(equalTo: safeAreaLayoutGuide.leadingAnchor, constant: 24),
+      contentStack.trailingAnchor.constraint(equalTo: safeAreaLayoutGuide.trailingAnchor, constant: -24),
+      contentStack.bottomAnchor.constraint(equalTo: safeAreaLayoutGuide.bottomAnchor, constant: -24)
     ])
   }
 }

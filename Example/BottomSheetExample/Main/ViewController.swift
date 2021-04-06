@@ -23,7 +23,6 @@ final class ViewController: UIViewController {
     super.viewDidLoad()
     
     mainView.populateSegmentedControl(picker: \.sheetSizingStylePicker, with: viewModel.sheetSizingItems)
-    mainView.populateSegmentedControl(picker: \.handleStylePicker, with: viewModel.handleStyleItems)
     
     mainView.button.addTarget(self, action: #selector(didPressButton), for: .touchUpInside)
     mainView.sheetSizingStylePicker.addTarget(self, action: #selector(didSelectSegmentedItem), for: .valueChanged)
@@ -31,21 +30,18 @@ final class ViewController: UIViewController {
   }
   
   @objc private func didPressButton(_ sender: UIButton) {
-    let controller = BottomSheetViewController(contentView: ExampleBottomSheetView())
-    controller.sheetCornerRadius = 32
-    controller.sheetSizingStyle = viewModel.selectedSheetSizingStyle
-    controller.handleStyle = viewModel.selectedHandleStyle
-    controller.contentInsets = UIEdgeInsets(top: 24, left: 24, bottom: 24, right: 24)
+    let controller = UIViewController()
+    let contentView = ExampleBottomSheetView()
+    contentView.sheetSizingStyle = viewModel.selectedSheetSizingStyle
+    controller.view = contentView
+    controller.modalPresentationStyle = .custom
+    controller.transitioningDelegate = (UIApplication.shared.delegate as? SheetPresenter)?.bottomSheetTransitioningDelegate
     present(controller, animated: true, completion: nil)
   }
   
   @objc func didSelectSegmentedItem(_ sender: UISegmentedControl) {
     if sender === mainView.sheetSizingStylePicker {
       viewModel.selectedSheetSizingStyle = viewModel.sheetSizingItems[mainView.sheetSizingStylePicker.selectedSegmentIndex].style
-      return
-    }
-    if sender === mainView.handleStylePicker {
-      viewModel.selectedHandleStyle = viewModel.handleStyleItems[mainView.handleStylePicker.selectedSegmentIndex].style
       return
     }
   }
