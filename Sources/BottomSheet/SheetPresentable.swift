@@ -8,7 +8,7 @@ public typealias SheetPresentable = SheetConfiguration
 public extension SheetPresentable {  
   var wantsGrabber: Bool { false }
   
-  var grabberSize: CGSize { CGSize(width: 32, height: 4) }
+  var grabberSize: CGSize { CGSize(width: 36, height: 4) }
   
   var topGrabberInset: CGFloat { 8 }
   

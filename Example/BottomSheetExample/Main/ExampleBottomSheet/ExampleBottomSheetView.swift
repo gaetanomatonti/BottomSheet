@@ -48,11 +48,23 @@ final class ExampleBottomSheetView: UIView, SheetPresentable {
     style()
   }
   
+  override func updateConstraints() {
+    super.updateConstraints()
+    
+    NSLayoutConstraint.activate([
+      contentStack.topAnchor.constraint(equalTo: safeAreaLayoutGuide.topAnchor),
+      contentStack.leadingAnchor.constraint(equalTo: safeAreaLayoutGuide.leadingAnchor, constant: 24),
+      contentStack.trailingAnchor.constraint(equalTo: safeAreaLayoutGuide.trailingAnchor, constant: -24),
+      contentStack.bottomAnchor.constraint(equalTo: safeAreaLayoutGuide.bottomAnchor, constant: -24)
+    ])
+  }
+  
   // MARK: - SSUL
   
   private func setup() {
     addSubview(contentStack)
-    setConstraints()
+
+    contentStack.translatesAutoresizingMaskIntoConstraints = false
   }
   
   private func style() {
@@ -66,19 +78,6 @@ final class ExampleBottomSheetView: UIView, SheetPresentable {
       with: "BottomSheet is a component made with UIKit and completely written in Swift\n🧡"
     )
     ExampleBottomSheetView.styleButton(button)
-  }
-  
-  // MARK: - Functions
-  
-  func setConstraints() {
-    contentStack.translatesAutoresizingMaskIntoConstraints = false
-    
-    NSLayoutConstraint.activate([
-      contentStack.topAnchor.constraint(equalTo: safeAreaLayoutGuide.topAnchor),
-      contentStack.leadingAnchor.constraint(equalTo: safeAreaLayoutGuide.leadingAnchor, constant: 24),
-      contentStack.trailingAnchor.constraint(equalTo: safeAreaLayoutGuide.trailingAnchor, constant: -24),
-      contentStack.bottomAnchor.constraint(equalTo: safeAreaLayoutGuide.bottomAnchor, constant: -24)
-    ])
   }
 }
 

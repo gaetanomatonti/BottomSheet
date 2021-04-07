@@ -19,6 +19,7 @@ public final class SheetPresentationController: UIPresentationController {
     presentedView as? SheetPresentable
   }
   
+  /// The configuration for the sheet.
   private var sheetConfiguration: SheetConfiguration {
     return sheetPresentableViewController ?? sheetPresentableView ?? SheetPresentationController.defaultConfiguration
   }
@@ -126,13 +127,10 @@ public final class SheetPresentationController: UIPresentationController {
   /// - Returns: A `CGRect` describing the frame of the bottom sheet.
   private func fixedFrame(_ height: CGFloat) -> CGRect {
     guard let containerView = containerView else { return .zero }
-    
-    let safeAreaFrame = containerView.bounds.inset(by: containerView.safeAreaInsets)
-    let targetWidth = safeAreaFrame.width
-    
-    var frame = safeAreaFrame
+
+    var frame = containerView.frame
     frame.origin.y += containerView.safeAreaInsets.bottom
-    frame.size.width = targetWidth
+    frame.size.width = containerView.frame.width
     frame.size.height = height
     
     if frame.height > toSafeAreaTopFrame.height {
@@ -168,12 +166,11 @@ public final class SheetPresentationController: UIPresentationController {
     if sheetConfiguration.wantsGrabber {
       grabber.center.x = presentedView.center.x
       grabber.frame.origin.y = sheetConfiguration.topGrabberInset
-      
-      let additionalSafeAreaTopInset = sheetConfiguration.topGrabberInset + grabber.frame.height + sheetConfiguration.bottomGrabberInset
-      presentedViewController.additionalSafeAreaInsets.top = additionalSafeAreaTopInset
     }
       
     dimmingView.frame = presenterView.bounds
+    
+    setAdditionalSafeAreaInsets()
   }
   
   public override func presentationTransitionWillBegin() {
@@ -223,25 +220,22 @@ public final class SheetPresentationController: UIPresentationController {
   /// - Parameters:
   ///   - gesture: The `UIPanGestureRecognizer` on the bottom sheet.
   @objc private func drag(_ gesture: UIPanGestureRecognizer) {
-    guard let presentedView = presentedView, let presenterView = containerView else { return }
+    guard let presentedView = presentedView else {
+      return
+    }
     
     defer {
       gesture.setTranslation(.zero, in: presentingViewController.view)
     }
     
     if case .changed = gesture.state {
-      presentingViewController.view.bringSubviewToFront(presentedView)
       let translation = gesture.translation(in: presentingViewController.view)
-      let y = presentedView.center.y + translation.y
       
-      let gap = presenterView.bounds.height - presentedView.frame.height
-      
-      let shouldBounce = y - gap / 2 > presentingViewController.view.center.y
-      
-      if shouldBounce {
-        presentedView.center = CGPoint(x: presentedView.center.x, y: y)
+      guard translation.y > 0 else {
+        return
       }
       
+      presentedView.transform.ty += translation.y
       return
     }
     
@@ -268,8 +262,8 @@ public final class SheetPresentationController: UIPresentationController {
   private func restorePosition() {
     guard let presentedView = presentedView else { return }
     
-    UIView.animate(withDuration: 0.25) { [self] in
-      presentedView.center = presentedViewCenter
+    UIView.animate(withDuration: 0.25) {
+      presentedView.transform = .identity
     }
   }
   
@@ -281,13 +275,24 @@ public final class SheetPresentationController: UIPresentationController {
   }
 }
 
-extension SheetPresentationController {
+private extension SheetPresentationController {
+  /// Sets the `additionalSafeAreaInsets` on the `presentedViewController` according to the configuration of the sheet.
+  /// An additional top inset is added to the safe area when `wantsGrabber` is set to `true`.
+  func setAdditionalSafeAreaInsets() {
+    if sheetConfiguration.wantsGrabber {
+      let additionalTopInset = sheetConfiguration.topGrabberInset + grabber.frame.height + sheetConfiguration.bottomGrabberInset
+      presentedViewController.additionalSafeAreaInsets.top = additionalTopInset
+    }
+  }
+}
+
+private extension SheetPresentationController {
   struct SheetPresentationControllerConfiguration: SheetConfiguration {
     var sheetSizingStyle: SheetSizingStyle = .toSafeAreaTop
     
     var wantsGrabber: Bool { false }
     
-    var grabberSize: CGSize { CGSize(width: 32, height: 4) }
+    var grabberSize: CGSize { CGSize(width: 36, height: 4) }
     
     var topGrabberInset: CGFloat { 8 }
     
