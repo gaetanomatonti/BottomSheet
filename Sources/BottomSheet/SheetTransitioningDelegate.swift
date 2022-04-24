@@ -4,12 +4,12 @@ import UIKit
 ///
 /// To present a view controller with a bottom sheet appearance you should set the `modalPresentationStyle` of a view controller to `.custom`
 /// and set its transitioning delegate to an instance of this class.
-public final class BottomSheetTransitioningDelegate: NSObject, UIViewControllerTransitioningDelegate {
+public final class SheetTransitioningDelegate: NSObject, UIViewControllerTransitioningDelegate {
   
   // MARK: - Stored Properties
   
   /// The object the manages the transition animations.
-  let transition = BottomSheetTransition()
+  let transition = SheetTransition()
   
   // MARK: - Functions
   
@@ -18,7 +18,7 @@ public final class BottomSheetTransitioningDelegate: NSObject, UIViewControllerT
     presenting: UIViewController?,
     source: UIViewController
   ) -> UIPresentationController? {
-    BottomSheetPresentationController(presentedViewController: presented, presenting: presenting)
+    SheetPresentationController(presentedViewController: presented, presenting: presenting)
   }
   
   public func animationController(

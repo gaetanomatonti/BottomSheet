@@ -1,7 +1,7 @@
 import UIKit
 
 /// An object that manages the presentation of a controller with a bottom sheet appearance.
-final class BottomSheetPresentationController: UIPresentationController {
+final class SheetPresentationController: UIPresentationController {
   
   // MARK: - Constants
   
@@ -56,8 +56,8 @@ final class BottomSheetPresentationController: UIPresentationController {
   }
   
   /// The object that is managing the presentation and transition.
-  private var transitioningDelegate: BottomSheetTransitioningDelegate? {
-    presentedViewController.transitioningDelegate as? BottomSheetTransitioningDelegate
+  private var transitioningDelegate: SheetTransitioningDelegate? {
+    presentedViewController.transitioningDelegate as? SheetTransitioningDelegate
   }
   
   // MARK: - UI Elements
@@ -260,7 +260,7 @@ final class BottomSheetPresentationController: UIPresentationController {
   }
 }
 
-extension BottomSheetPresentationController: UIScrollViewDelegate {
+extension SheetPresentationController: UIScrollViewDelegate {
   func scrollViewWillBeginDragging(_ scrollView: UIScrollView) {
     guard scrollView.contentOffset.y <= .zero else {
       return

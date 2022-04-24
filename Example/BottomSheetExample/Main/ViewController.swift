@@ -9,7 +9,7 @@ final class ViewController: UIViewController {
   
   // MARK: - Stored Properties
   
-  private let sheetTransitioningDelegate = BottomSheetTransitioningDelegate()
+  private let sheetTransitioningDelegate = SheetTransitioningDelegate()
   
   // MARK: - Computed Properties
   

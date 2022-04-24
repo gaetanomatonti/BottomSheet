@@ -2,16 +2,7 @@
 
 A Bottom Sheet component made in UIKit.
 
-![][bottom_sheet_preview]
-
-## Table of contents
-<!--ts-->
-* [Installation](#installation)
-* [Usage](#usage)
-    * [`BottomSheetViewController`](#bottomsheetviewcontroller)
-    * [Presentation](#presentation)
-* [Documentation](#documentation)
-<!--te-->
+![](Documentation/images/preview.gif)
 
 ## Installation
 ### Swift Package Manager
@@ -26,41 +17,21 @@ Edit your `Package.swift` file and add the repository URL to the  dependencies.
 
 ```swift
 dependencies: [
-    .package(url: "https://github.com/gaetanomatonti/BottomSheet", .upToNextMajor(from: "0.2.0"))
+    .package(url: "https://github.com/gaetanomatonti/BottomSheet", .upToNextMajor(from: "0.4.0"))
 ]
 ```
 
 ## Usage
 
-### `BottomSheetViewController`
-This controller uses `BottomSheetView` as its main view. To specify custom content for the bottom sheet create your own view, and assign it to the `contentView` variable of the controller. You can either do this by subclassing `BottomSheetViewController`, to implement your own business logic, or by assigning the view at initialisation before presenting the sheet.
+### `SheetTransitioningDelegate`
+Inside your view controller store a new instance of `SheetTransitioningDelegate`. When presenting a new view controller you should set its `modalPresentationStyle` to `.custom` and its `transitioningDelegate` to the `SheetTransitioningDelegate` you stored.
 
-#### Example: subclassing `BottomSheetViewController`
-
+#### Example
 ```swift
-final class CustomBottomSheetViewController: BottomSheetViewController {
-    override func loadView() {
-        super.loadView()
-        	
-        let myView = UIView()
-        myView.backgroundColor = .red
-		
-        contentView = myView
-    }
+func presentViewController() {
+  let viewController = UIViewController()
+  viewController.modalPresentationStyle = .custom
+  viewController.transitioningDelegate = sheetTransitioningDelegate
+  present(viewController, animated: true)
 }
 ```
-
-#### Example: assignment on init
-
-```swift
-func presentBottomSheet() {
-    let controller = BottomSheetViewController()
-    controller.contentView = UIView()
-    ...
-}
-```
-
-## Documentation
-You can find a more detailed documentation [here](Documentation/Index.md).
-
-[bottom_sheet_preview]: Documentation/images/bottomsheet_preview.gif "BottomSheet Preview"

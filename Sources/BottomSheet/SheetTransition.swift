@@ -1,7 +1,7 @@
 import UIKit
 
-/// An object that manages the transition animations for a `BottomSheetPresentationController`.
-final class BottomSheetTransition: UIPercentDrivenInteractiveTransition, UIViewControllerAnimatedTransitioning {
+/// An object that manages the transition animations for a `SheetPresentationController`.
+final class SheetTransition: UIPercentDrivenInteractiveTransition, UIViewControllerAnimatedTransitioning {
   
   // MARK: - Stored Properties
     
