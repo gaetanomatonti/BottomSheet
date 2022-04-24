@@ -1,8 +1,5 @@
 //
-//  ViewController.swift
 //  BottomSheetExample
-//
-//  Created by Gaetano Matonti on 22/11/20.
 //
 
 import UIKit
@@ -10,39 +7,34 @@ import BottomSheet
 
 final class ViewController: UIViewController {
   
-  private let viewModel = ViewModel()
-  private let mainView = View()
+  // MARK: - Stored Properties
+  
+  private let sheetTransitioningDelegate = BottomSheetTransitioningDelegate()
+  
+  // MARK: - Computed Properties
+  
+  private var rootView: View? {
+    view as? View
+  }
+  
+  // MARK: - Lifecycle
   
   override func loadView() {
-    super.loadView()
-    
-    view = mainView
+    view = View()
   }
   
   override func viewDidLoad() {
     super.viewDidLoad()
-    
-    mainView.populateSegmentedControl(picker: \.sheetSizingStylePicker, with: viewModel.sheetSizingItems)
-    
-    mainView.button.addTarget(self, action: #selector(didPressButton), for: .touchUpInside)
-    mainView.sheetSizingStylePicker.addTarget(self, action: #selector(didSelectSegmentedItem), for: .valueChanged)
-    mainView.handleStylePicker.addTarget(self, action: #selector(didSelectSegmentedItem), for: .valueChanged)
+        
+    rootView?.presentSheetButton.addAction(UIAction(handler: didPressButton), for: .touchUpInside)
   }
   
-  @objc private func didPressButton(_ sender: UIButton) {
-    let controller = UIViewController()
-    let contentView = ExampleBottomSheetView()
-    contentView.sheetSizingStyle = viewModel.selectedSheetSizingStyle
-    controller.view = contentView
+  // MARK: - Private Helpers
+  
+  private func didPressButton(_ action: UIAction) {
+    let controller = ExampleBottomSheetViewController()
     controller.modalPresentationStyle = .custom
-    controller.transitioningDelegate = (UIApplication.shared.delegate as? SheetPresenter)?.bottomSheetTransitioningDelegate
-    present(controller, animated: true, completion: nil)
-  }
-  
-  @objc func didSelectSegmentedItem(_ sender: UISegmentedControl) {
-    if sender === mainView.sheetSizingStylePicker {
-      viewModel.selectedSheetSizingStyle = viewModel.sheetSizingItems[mainView.sheetSizingStylePicker.selectedSegmentIndex].style
-      return
-    }
+    controller.transitioningDelegate = sheetTransitioningDelegate
+    present(controller, animated: true)
   }
 }

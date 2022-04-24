@@ -13,8 +13,8 @@
 		9B42EB8D256A7E2500C7448D /* BottomSheet in Frameworks */ = {isa = PBXBuildFile; productRef = 9B42EB8C256A7E2500C7448D /* BottomSheet */; };
 		9B42EB97256A7FD300C7448D /* ViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9B42EB96256A7FD300C7448D /* ViewController.swift */; };
 		9B42EB9B256A7FFE00C7448D /* View.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9B42EB9A256A7FFE00C7448D /* View.swift */; };
-		9B42EB9F256A801A00C7448D /* ViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9B42EB9E256A801A00C7448D /* ViewModel.swift */; };
 		9B42EBA5256A803F00C7448D /* ExampleBottomSheetView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9B42EBA4256A803F00C7448D /* ExampleBottomSheetView.swift */; };
+		9BF6CB67281553BB0087E00F /* ExampleBottomSheetViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9BF6CB66281553BB0087E00F /* ExampleBottomSheetViewController.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -25,8 +25,8 @@
 		9B42EB82256A7DB500C7448D /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		9B42EB96256A7FD300C7448D /* ViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ViewController.swift; sourceTree = "<group>"; };
 		9B42EB9A256A7FFE00C7448D /* View.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = View.swift; sourceTree = "<group>"; };
-		9B42EB9E256A801A00C7448D /* ViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ViewModel.swift; sourceTree = "<group>"; };
 		9B42EBA4256A803F00C7448D /* ExampleBottomSheetView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ExampleBottomSheetView.swift; sourceTree = "<group>"; };
+		9BF6CB66281553BB0087E00F /* ExampleBottomSheetViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ExampleBottomSheetViewController.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -90,7 +90,6 @@
 				9B42EBA2256A802600C7448D /* ExampleBottomSheet */,
 				9B42EB96256A7FD300C7448D /* ViewController.swift */,
 				9B42EB9A256A7FFE00C7448D /* View.swift */,
-				9B42EB9E256A801A00C7448D /* ViewModel.swift */,
 			);
 			path = Main;
 			sourceTree = "<group>";
@@ -116,6 +115,7 @@
 			isa = PBXGroup;
 			children = (
 				9B42EBA4256A803F00C7448D /* ExampleBottomSheetView.swift */,
+				9BF6CB66281553BB0087E00F /* ExampleBottomSheetViewController.swift */,
 			);
 			path = ExampleBottomSheet;
 			sourceTree = "<group>";
@@ -193,8 +193,8 @@
 			buildActionMask = 2147483647;
 			files = (
 				9B42EBA5256A803F00C7448D /* ExampleBottomSheetView.swift in Sources */,
-				9B42EB9F256A801A00C7448D /* ViewModel.swift in Sources */,
 				9B42EB9B256A7FFE00C7448D /* View.swift in Sources */,
+				9BF6CB67281553BB0087E00F /* ExampleBottomSheetViewController.swift in Sources */,
 				9B42EB97256A7FD300C7448D /* ViewController.swift in Sources */,
 				9B42EB75256A7DB400C7448D /* AppDelegate.swift in Sources */,
 			);
@@ -339,7 +339,7 @@
 				DEVELOPMENT_TEAM = 7G4N3SZHJZ;
 				ENABLE_PREVIEWS = YES;
 				INFOPLIST_FILE = BottomSheetExample/Resources/Info.plist;
-				IPHONEOS_DEPLOYMENT_TARGET = 12.1;
+				IPHONEOS_DEPLOYMENT_TARGET = 14.0;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
@@ -360,7 +360,7 @@
 				DEVELOPMENT_TEAM = 7G4N3SZHJZ;
 				ENABLE_PREVIEWS = YES;
 				INFOPLIST_FILE = BottomSheetExample/Resources/Info.plist;
-				IPHONEOS_DEPLOYMENT_TARGET = 12.1;
+				IPHONEOS_DEPLOYMENT_TARGET = 14.0;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
