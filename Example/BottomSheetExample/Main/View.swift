@@ -1,8 +1,5 @@
 //
-//  View.swift
 //  BottomSheetExample
-//
-//  Created by Gaetano Matonti on 22/11/20.
 //
 
 import UIKit
@@ -10,25 +7,9 @@ import UIKit
 final class View: UIView {
   
   // MARK: - UI Elements
-  
-  lazy var sheetSizingStylePicker = UISegmentedControl()
-  
-  lazy var handleStylePicker = UISegmentedControl()
-  
-  let button: UIButton = {
-    let button = UIButton()
-    button.setTitle("Press me", for: .normal)
-    button.setTitleColor(.systemBlue, for: .normal)
-    return button
-  }()
-  
-  lazy var contentStack: UIStackView = {
-    let stack = UIStackView(arrangedSubviews: [sheetSizingStylePicker, handleStylePicker, button])
-    stack.axis = .vertical
-    stack.spacing = 16
-    return stack
-  }()
-  
+    
+  let presentSheetButton = UIButton()
+    
   // MARK: - Init
   
   override init(frame: CGRect) {
@@ -36,43 +17,31 @@ final class View: UIView {
 
     setup()
     style()
+    layout()
   }
   
   required init?(coder: NSCoder) {
-    super.init(coder: coder)
-    
-    setup()
-    style()
+    return nil
   }
   
   // MARK: - SSUL
   
   private func setup() {
-    addSubview(contentStack)
-    
-    contentStack.translatesAutoresizingMaskIntoConstraints = false
-    NSLayoutConstraint.activate([
-      contentStack.topAnchor.constraint(equalTo: safeAreaLayoutGuide.topAnchor),
-      contentStack.leadingAnchor.constraint(equalTo: safeAreaLayoutGuide.leadingAnchor, constant: 16),
-      contentStack.trailingAnchor.constraint(equalTo: safeAreaLayoutGuide.trailingAnchor, constant: -16),
-      contentStack.bottomAnchor.constraint(equalTo: safeAreaLayoutGuide.bottomAnchor)
-    ])
+    addSubview(presentSheetButton)
   }
   
   private func style() {
-    View.styleView(self)
+    Self.styleView(self)
+    Self.stylePresentSheetButton(presentSheetButton)
   }
   
-  // MARK: - Functions
-  
-  func populateSegmentedControl<I: Item>(picker: KeyPath<View, UISegmentedControl>, with items: [I]) {
-    self[keyPath: picker].removeAllSegments()
+  private func layout() {
+    presentSheetButton.translatesAutoresizingMaskIntoConstraints = false
     
-    items.enumerated().forEach { index, item in
-      self[keyPath: picker].insertSegment(withTitle: item.title, at: index, animated: false)
-    }
-    
-    self[keyPath: picker].selectedSegmentIndex = 0
+    NSLayoutConstraint.activate([
+      presentSheetButton.centerXAnchor.constraint(equalTo: centerXAnchor),
+      presentSheetButton.centerYAnchor.constraint(equalTo: centerYAnchor)
+    ])
   }
 }
 
@@ -84,6 +53,16 @@ private extension View {
       view.backgroundColor = .systemGroupedBackground
     } else {
       view.backgroundColor = .groupTableViewBackground
+    }
+  }
+  
+  static func stylePresentSheetButton(_ button: UIButton) {
+    if #available(iOS 15.0, *) {
+      var configuration = UIButton.Configuration.borderedTinted()
+      configuration.title = "Present Sheet"
+      button.configuration = configuration
+    } else {
+      button.setTitle("Present Sheet", for: .normal)
     }
   }
 }

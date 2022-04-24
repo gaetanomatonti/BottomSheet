@@ -1,11 +1,9 @@
 //
-//  ExampleBottomSheetView.swift
 //  BottomSheetExample
-//
-//  Created by Gaetano Matonti on 22/11/20.
 //
 
 import UIKit
+import BottomSheet
 
 final class ExampleBottomSheetView: UIView {
   
@@ -16,15 +14,7 @@ final class ExampleBottomSheetView: UIView {
   let descriptionLabel = UILabel()
   
   let button = UIButton(type: .system)
-  
-  lazy var contentStack: UIStackView = {
-    let stack = UIStackView(arrangedSubviews: [titleLabel, descriptionLabel, button])
-    stack.axis = .vertical
-    stack.spacing = 16
-    stack.setCustomSpacing(24, after: descriptionLabel)
-    return stack
-  }()
-  
+    
   // MARK: - Init
   
   override init(frame: CGRect) {
@@ -32,20 +22,19 @@ final class ExampleBottomSheetView: UIView {
     
     setup()
     style()
+    layout()
   }
   
   required init?(coder: NSCoder) {
-    super.init(coder: coder)
-    
-    setup()
-    style()
+    return nil
   }
-  
+    
   // MARK: - SSUL
   
   private func setup() {
-    addSubview(contentStack)
-    setConstraints()
+    addSubview(titleLabel)
+    addSubview(descriptionLabel)
+    addSubview(button)
   }
   
   private func style() {
@@ -61,16 +50,30 @@ final class ExampleBottomSheetView: UIView {
     ExampleBottomSheetView.styleButton(button)
   }
   
-  // MARK: - Functions
-  
-  func setConstraints() {
-    contentStack.translatesAutoresizingMaskIntoConstraints = false
+  private func layout() {
+    titleLabel.translatesAutoresizingMaskIntoConstraints = false
     
     NSLayoutConstraint.activate([
-      contentStack.topAnchor.constraint(equalTo: topAnchor),
-      contentStack.leadingAnchor.constraint(equalTo: leadingAnchor),
-      contentStack.trailingAnchor.constraint(equalTo: trailingAnchor),
-      contentStack.bottomAnchor.constraint(equalTo: bottomAnchor)
+      titleLabel.topAnchor.constraint(equalTo: safeAreaLayoutGuide.topAnchor, constant: 24),
+      titleLabel.leadingAnchor.constraint(equalTo: safeAreaLayoutGuide.leadingAnchor, constant: 24),
+      titleLabel.trailingAnchor.constraint(equalTo: safeAreaLayoutGuide.trailingAnchor, constant: -24)
+    ])
+    
+    descriptionLabel.translatesAutoresizingMaskIntoConstraints = false
+    
+    NSLayoutConstraint.activate([
+      descriptionLabel.topAnchor.constraint(equalTo: titleLabel.bottomAnchor, constant: 16),
+      descriptionLabel.leadingAnchor.constraint(equalTo: safeAreaLayoutGuide.leadingAnchor, constant: 24),
+      descriptionLabel.trailingAnchor.constraint(equalTo: safeAreaLayoutGuide.trailingAnchor, constant: -24)
+    ])
+    
+    button.translatesAutoresizingMaskIntoConstraints = false
+    
+    NSLayoutConstraint.activate([
+      button.topAnchor.constraint(equalTo: descriptionLabel.bottomAnchor, constant: 16),
+      button.leadingAnchor.constraint(equalTo: safeAreaLayoutGuide.leadingAnchor, constant: 24),
+      button.trailingAnchor.constraint(equalTo: safeAreaLayoutGuide.trailingAnchor, constant: -24),
+      button.bottomAnchor.constraint(equalTo: safeAreaLayoutGuide.bottomAnchor, constant: -24)
     ])
   }
 }
@@ -88,10 +91,9 @@ extension ExampleBottomSheetView {
   
   static func styleTitleLabel(_ label: UILabel, with text: String?) {
     label.text = text
-    label.font = .preferredFont(forTextStyle: .largeTitle)
+    label.font = .preferredFont(forTextStyle: .title1)
     label.numberOfLines = 0
     label.textAlignment = .center
-    label.setContentHuggingPriority(.defaultHigh, for: .vertical)
   }
   
   static func styleDescriptionLabel(_ label: UILabel, with text: String?) {
@@ -102,11 +104,20 @@ extension ExampleBottomSheetView {
   }
   
   static func styleButton(_ button: UIButton) {
-    button.backgroundColor = .systemOrange
-    button.setTitle("Download", for: .normal)
-    button.titleLabel?.font = .preferredFont(forTextStyle: .headline)
-    button.setTitleColor(.white, for: .normal)
-    button.contentEdgeInsets = UIEdgeInsets(top: 12, left: 12, bottom: 12, right: 12)
-    button.layer.cornerRadius = 8
+    if #available(iOS 15, *) {
+      var configuration = UIButton.Configuration.borderedProminent()
+      configuration.title = "Download"
+      configuration.contentInsets = NSDirectionalEdgeInsets(top: 16, leading: 16, bottom: 16, trailing: 16)
+      configuration.baseBackgroundColor = .systemOrange
+      configuration.cornerStyle = .medium
+      button.configuration = configuration
+    } else {
+      button.backgroundColor = .systemOrange
+      button.setTitle("Download", for: .normal)
+      button.titleLabel?.font = .preferredFont(forTextStyle: .headline)
+      button.setTitleColor(.white, for: .normal)
+      button.titleEdgeInsets = UIEdgeInsets(top: 12, left: 12, bottom: 12, right: 12)
+      button.layer.cornerRadius = 8
+    }
   }
 }
