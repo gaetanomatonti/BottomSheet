@@ -32,10 +32,12 @@ public final class SheetTransitioningDelegate: NSObject, UIViewControllerTransit
   }
   
   public func animationController(forDismissed dismissed: UIViewController) -> UIViewControllerAnimatedTransitioning? {
-    transition
+    transition.isPresenting = false
+    return transition
   }
   
   public func interactionControllerForDismissal(using animator: UIViewControllerAnimatedTransitioning) -> UIViewControllerInteractiveTransitioning? {
-    transition
+    transition.isPresenting = false
+    return transition
   }
 }
