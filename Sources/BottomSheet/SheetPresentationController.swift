@@ -190,7 +190,6 @@ final class SheetPresentationController: UIPresentationController {
   /// Triggers the dismiss transition in an interactive manner.
   /// - Parameter isInteractive: Whether the transition should be started interactively by the user.
   private func dismiss(interactively isInteractive: Bool) {
-    transitioningDelegate?.transition.isPresenting = false
     transitioningDelegate?.transition.wantsInteractiveStart = isInteractive
     presentedViewController.dismiss(animated: true)
   }
