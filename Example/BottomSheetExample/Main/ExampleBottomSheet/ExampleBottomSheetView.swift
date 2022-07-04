@@ -15,6 +15,10 @@ final class ExampleBottomSheetView: UIView {
   
   let button = UIButton(type: .system)
     
+  // MARK: - Interactions
+  
+  var didTapButton: (() -> Void)?
+  
   // MARK: - Init
   
   override init(frame: CGRect) {
@@ -35,6 +39,11 @@ final class ExampleBottomSheetView: UIView {
     addSubview(titleLabel)
     addSubview(descriptionLabel)
     addSubview(button)
+    
+    let action = UIAction { [weak self] _ in
+      self?.didTapButton?()
+    }
+    button.addAction(action, for: .touchUpInside)
   }
   
   private func style() {
@@ -106,14 +115,14 @@ extension ExampleBottomSheetView {
   static func styleButton(_ button: UIButton) {
     if #available(iOS 15, *) {
       var configuration = UIButton.Configuration.borderedProminent()
-      configuration.title = "Download"
+      configuration.title = "Dismiss"
       configuration.contentInsets = NSDirectionalEdgeInsets(top: 16, leading: 16, bottom: 16, trailing: 16)
       configuration.baseBackgroundColor = .systemOrange
       configuration.cornerStyle = .medium
       button.configuration = configuration
     } else {
       button.backgroundColor = .systemOrange
-      button.setTitle("Download", for: .normal)
+      button.setTitle("Dismiss", for: .normal)
       button.titleLabel?.font = .preferredFont(forTextStyle: .headline)
       button.setTitleColor(.white, for: .normal)
       button.titleEdgeInsets = UIEdgeInsets(top: 12, left: 12, bottom: 12, right: 12)
